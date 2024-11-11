@@ -1,0 +1,6 @@
+@Jivar.API_HostAddress = http://localhost:5287
+
+GET {{Jivar.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
