@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Jivar.Service.Constant
+﻿namespace Jivar.Service.Constant
 {
     public class APIEndPointConstant
     {
@@ -21,6 +15,20 @@ namespace Jivar.Service.Constant
             public const string Login = AuthenticationEndpoint + "/login";
             public const string CreateAccount = AuthenticationEndpoint + "/create";
             public const string UpdatePassword = AuthenticationEndpoint + "/changepass";
+        }
+
+        public static class SprintE
+        {
+            public const string SprintEndpoint = ApiEndpoint + "/sprint";
+            public const string GetSprintById = SprintEndpoint + "/{id}";
+            public const string UpdateSprint = SprintEndpoint + "/{id}";
+        }
+
+        public static class TaskE
+        {
+            public const string TaskEndpoint = ApiEndpoint + "/task";
+            public const string GetTaskById = TaskEndpoint + "/{id}";
+            public const string UpdateTask = TaskEndpoint + "/{id}";
         }
     }
 }

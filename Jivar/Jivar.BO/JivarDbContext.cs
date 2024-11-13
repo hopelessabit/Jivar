@@ -337,7 +337,6 @@ public partial class JivarDbContext : DbContext
                 .HasColumnName("create_time");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.DocumentId).HasColumnName("document_id");
-            entity.Property(e => e.SprintId).HasColumnName("sprint_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .IsUnicode(false)
