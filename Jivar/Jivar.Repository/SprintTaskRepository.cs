@@ -1,5 +1,5 @@
-﻿using Jivar.DAO.DAOs;
-using Jivar.BO.Models;
+﻿using Jivar.BO.Models;
+using Jivar.DAO.DAOs;
 using Jivar.Repository.Interface;
 
 namespace Jivar.Repository
@@ -8,6 +8,11 @@ namespace Jivar.Repository
     {
         public SprintTaskRepository() : base(SprintTaskDAO.Instance)
         {
+        }
+
+        public Task<bool> DeleteAsync(int? id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

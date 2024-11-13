@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class Task
 {
     public int Id { get; set; }
-
-    public int? SprintId { get; set; }
 
     public string? Title { get; set; }
 

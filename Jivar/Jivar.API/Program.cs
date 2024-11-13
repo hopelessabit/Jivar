@@ -1,18 +1,18 @@
 ﻿using Jivar.BO;
+using Jivar.DAO;
 using Jivar.DAO.DAOs;
 using Jivar.DAO.Interface;
 using Jivar.Repository;
 using Jivar.Repository.Interface;
+using Jivar.Service.Implements;
 using Jivar.Service.Interfaces;
 using Jivar.Service.PayLoads.Requests.Firebase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Jivar.Service.Implements;
-using Jivar.DAO;
-using Microsoft.EntityFrameworkCore;
-using Google;
 
 internal class Program
 {
@@ -102,6 +102,7 @@ internal class Program
             };
         });
 
+        builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
 
@@ -110,10 +111,17 @@ internal class Program
 
         //Add repostories
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<ISprintRepository, SprintRepository>();
+        builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
+        builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
+        builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IAccountService, AccountService>();
+        builder.Services.AddScoped<ISprintService, SprintService>();
+        builder.Services.AddScoped<ISprintTaskService, SprintTaskService>();
+        builder.Services.AddScoped<ITaskService, TaskService>();
 
 
         // Add services to the container.
@@ -122,6 +130,7 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
 
