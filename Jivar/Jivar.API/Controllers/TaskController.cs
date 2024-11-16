@@ -23,12 +23,12 @@ namespace Jivar.API.Controllers
             _taskService = taskService;
         }
 
-        [HttpPost(APIEndPointConstant.TaskE.TaskEndpoint)]
+        [HttpPost(APIEndPointConstant.TaskE.CreateTask)]
         [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult> CreateNewSprint([FromBody] CreateTaskRequest request)
+        public async Task<ActionResult> CreateNewSprint(int sprintId, [FromBody] CreateTaskRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (request == null)
+            if (request == null || sprintId == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
@@ -36,16 +36,22 @@ namespace Jivar.API.Controllers
             {
                 Title = request.Title,
                 Description = request.Description,
-                CreateBy = Int32.Parse(userId),
+                CreateBy = int.Parse(userId),
                 CreateTime = DateTime.UtcNow,
                 AssignBy = request.AssignBy,
                 Assignee = request.Assignee,
-                CompleteTime = request.CompleteTime,
                 DocumentId = request.DocumentId,
                 Status = TaskEnum.IN_PROGRESS.ToString(),
             };
-            var result = await _taskService.CreateTask(task);
-
+            var result = _taskService.CreateTask(task);
+            var sprintTask = new BO.Models.SprintTask()
+            {
+                SprintId = sprintId,
+                TaskId = result.Id,
+                StartDate = request.startDateSprintTask,
+                EndDate = request.endDateSprintTask,
+            };
+            await _sprintTaskService.AddSprintTask(sprintTask);
             var taskResponse = new CreateTaskResponse
             {
                 Title = request.Title,
@@ -54,12 +60,13 @@ namespace Jivar.API.Controllers
                 CreateTime = DateTime.UtcNow,
                 AssignBy = request.AssignBy,
                 Assignee = request.Assignee,
-                CompleteTime = request.CompleteTime,
                 DocumentId = request.DocumentId,
                 Status = task.Status,
             };
             var response = new ApiResponse<CreateTaskResponse>(StatusCodes.Status200OK, "Tạo task thành công", taskResponse);
             return StatusCode(StatusCodes.Status200OK, response);
         }
+
+
     }
 }

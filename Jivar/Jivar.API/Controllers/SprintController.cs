@@ -20,17 +20,17 @@ namespace Jivar.API.Controllers
             _sprintTaskService = sprintTaskService;
         }
 
-        [HttpPost(APIEndPointConstant.SprintE.SprintEndpoint)]
+        [HttpPost(APIEndPointConstant.SprintE.CreateSprint)]
         [ProducesResponseType(typeof(CreateSprintResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult> CreateNewSprint([FromBody] CreateSprintRequest request)
+        public async Task<ActionResult> CreateNewSprint(int projectId, [FromBody] CreateSprintRequest request)
         {
-            if (request == null)
+            if (request == null || projectId == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
             var sprint = new Sprint()
             {
-                ProjectId = request.ProjectId,
+                ProjectId = projectId,
                 Name = request.Name,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
