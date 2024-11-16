@@ -1,20 +1,22 @@
-﻿using Jivar.Repository.Interface;
+﻿using Jivar.DAO;
 using Jivar.Service.Interfaces;
 
 namespace Jivar.Service.Implements
 {
     public class TaskService : ITaskService
     {
-        private readonly ITaskRepository _taskRepository;
+        private readonly JivarDbContext _dbContext;
 
-        public TaskService(ITaskRepository taskRepository)
+        public TaskService(JivarDbContext dbContext)
         {
-            _taskRepository = taskRepository;
+            _dbContext = dbContext;
         }
 
-        public async Task<bool> CreateTask(BO.Models.Task task)
+        public BO.Models.Task CreateTask(BO.Models.Task task)
         {
-            return await _taskRepository.AddAsync(task);
+            _dbContext.Tasks.Add(task);
+            _dbContext.SaveChanges();
+            return task;
         }
     }
 }

@@ -3,6 +3,6 @@ namespace Jivar.Service.Interfaces
 {
     public interface ITaskService
     {
-        Task<bool> CreateTask(BO.Models.Task task);
+        BO.Models.Task CreateTask(BO.Models.Task task);
     }
 }

@@ -6,9 +6,6 @@ namespace Jivar.Service.Payloads.Sprint.Request
     public class CreateSprintRequest
     {
         [Required]
-        public int? ProjectId { get; set; }
-
-        [Required]
         public string? Name { get; set; }
 
         [DateLessThanOrEqualToToday]

@@ -113,7 +113,6 @@ internal class Program
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<ISprintRepository, SprintRepository>();
         builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
-        builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
         builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
         //Add services
