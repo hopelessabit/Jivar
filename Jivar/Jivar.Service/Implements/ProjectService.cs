@@ -88,13 +88,13 @@ namespace Jivar.Service.Implements
 
             List<ProjectResonse> result = projects.Select(p => new ProjectResonse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
             
-            if (includeRole.Value)
+            if (includeRole != null && includeRole.Value)
             {
                 List<ProjectRole> roles = await _roleService.GetProjectRolesByIds(projects.Select(p => p.Id).ToList());
-                accountInfos.Union((await _accountSerivce.GetAccountsByIds(roles.Select(r => r.AccountId).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList());
+                accountInfos.AddRange((await _accountSerivce.GetAccountsByIds(roles.Select(r => r.AccountId).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList());
 
                 List<ProjectRoleResponse> roleResponses = new List<ProjectRoleResponse>();
-                roles.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.ProjectId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
+                roles.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.AccountId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
 
                 foreach (var item in result)
                     item.Roles = roleResponses.FindAll(rr => roles.FindAll(r => r.ProjectId == item.Id).ToList().Select(r => r.AccountId).Contains(rr.AccountId));

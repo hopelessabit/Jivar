@@ -15,7 +15,7 @@ namespace Jivar.Service.Payloads.ProjectRole.Response
             if (account == null) throw new ArgumentNullException(nameof(account));
             this.AccountId = account.Id;
             this.AccountName = account.Name;
-            this.Role = role.ToString();
+            this.Role = role.Role.ToString();
         }
     }
 }

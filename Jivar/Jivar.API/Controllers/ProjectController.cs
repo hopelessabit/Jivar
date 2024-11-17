@@ -32,12 +32,12 @@ namespace Jivar.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProjects([FromQuery] PagingAndSortingParams pagingParams, [FromQuery] string? searchTerm = null)
+        public async Task<IActionResult> GetProjects([FromQuery] PagingAndSortingParams pagingParams, [FromQuery] bool? includeRole = null, [FromQuery] bool? includeSprint = null, [FromQuery] string? searchTerm = null)
         {
             try
             {
                 // Call the service to get paginated, sorted, and optionally filtered projects
-                var result = await _projectService.GetProjects(pagingParams, searchTerm);
+                var result = await _projectService.GetProjects(pagingParams, searchTerm, includeSprint, includeRole);
 
                 // Return the result with an OK status
                 return Ok(result);

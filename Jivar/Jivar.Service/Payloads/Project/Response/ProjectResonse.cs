@@ -34,7 +34,6 @@ namespace Jivar.Service.Payloads.Project.Response
             CreateTime = project.CreateTime;
             CompleteTime = project.CompleteTime;
             Budget = project.Budget;
-            string a = project.Status.ToString();
             Status = project.Status.ToString();
         }
 

@@ -9,6 +9,7 @@ using Jivar.Service.PayLoads.Requests.Firebase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -101,10 +102,8 @@ internal class Program
                 ValidAudience = jwtSettings.Audience
             };
         });
-
         builder.Services.AddControllers()
-             .AddJsonOptions(o => o.JsonSerializerOptions
-                 .ReferenceHandler = ReferenceHandler.Preserve);
+             .AddJsonOptions(options => {options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;});
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
