@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class Sprint
 {

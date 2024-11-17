@@ -6,7 +6,7 @@ namespace Jivar.Service.Interfaces
     {
         Task<bool> createSprint(Sprint sprint);
         Task<IEnumerable<Sprint>> listSprints();
-        Task<Sprint?> getSprintById(int? sprintId);
+        Task<Sprint> getSprintById(int? sprintId);
         Task<bool> updateSprint(Sprint result);
         Task<bool> deleteSprint(Sprint result);
     }

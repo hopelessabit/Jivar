@@ -20,7 +20,7 @@ namespace Jivar.API.Controllers
             _sprintTaskService = sprintTaskService;
         }
 
-        [HttpPost(APIEndPointConstant.SprintE.CreateSprint)]
+        [HttpPost(APIEndPointConstant.SprintE.SprintEndpoint)]
         [ProducesResponseType(typeof(CreateSprintResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateNewSprint(int projectId, [FromBody] CreateSprintRequest request)
         {
@@ -69,7 +69,7 @@ namespace Jivar.API.Controllers
         }
 
         [HttpGet(APIEndPointConstant.SprintE.GetSprintById)]
-        [ProducesResponseType(typeof(CreateSprintResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Sprint), StatusCodes.Status200OK)]
         public async Task<ActionResult> getSprintById(int? id)
         {
             if (id == null)
@@ -77,15 +77,7 @@ namespace Jivar.API.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
             var result = await _sprintService.getSprintById(id);
-            var SprintResponse = new CreateSprintResponse
-            {
-                Id = result.Id,
-                ProjectId = result.ProjectId,
-                Name = result.Name,
-                StartDate = result.StartDate,
-                EndDate = result.EndDate,
-            };
-            var response = new ApiResponse<CreateSprintResponse>(StatusCodes.Status200OK, "Lấy sprint thành công", SprintResponse);
+            var response = new ApiResponse<Sprint>(StatusCodes.Status200OK, "Lấy sprint thành công", result);
             return StatusCode(StatusCodes.Status200OK, response);
         }
 

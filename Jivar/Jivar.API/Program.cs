@@ -9,11 +9,9 @@ using Jivar.Service.PayLoads.Requests.Firebase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json.Serialization;
 
 internal class Program
 {
@@ -103,7 +101,8 @@ internal class Program
             };
         });
         builder.Services.AddControllers()
-             .AddJsonOptions(options => {options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;});
+          .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; });
+
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
@@ -133,6 +132,8 @@ internal class Program
         builder.Services.AddScoped<IBacklogService, BacklogService>();
         builder.Services.AddScoped<IProjectService, ProjectService>();
         builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
+        builder.Services.AddScoped<IDocumentService, DocumentService>();
+        builder.Services.AddScoped<ITaskDocumentService, TaskDocumentService>();
 
 
         // Add services to the container.
@@ -144,7 +145,6 @@ internal class Program
         builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
-
 
         app.UseCors("AllowSpecificOrigin");
         // Configure the HTTP request pipeline.

@@ -28,5 +28,18 @@ namespace Jivar.Service.Implements
             }
             return false;
         }
+
+        public bool deleteGroupTask(int id)
+        {
+            GroupTask groupTask = null;
+            groupTask = _dbContext.GroupTasks.FirstOrDefault(gt => gt.SubtaskId == id);
+            if (groupTask != null)
+            {
+                _dbContext.Remove(groupTask);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }
