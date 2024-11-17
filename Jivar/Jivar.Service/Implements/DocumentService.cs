@@ -47,5 +47,27 @@ namespace Jivar.Service.Implements
                 return null;
             }
         }
+
+        public List<Document> getDocuments()
+        {
+            return _dbContext.Documents.ToList();
+        }
+
+        public Document getDocumentsById(int documentId)
+        {
+            return _dbContext.Documents.FirstOrDefault(d => d.Id == documentId);
+        }
+
+        public bool deleteDocumentsById(int id)
+        {
+            TaskDocument document = _dbContext.TaskDocuments.FirstOrDefault(d => d.DocumentId == id);
+            if (document != null)
+            {
+                _dbContext.TaskDocuments.Remove(document);
+                _dbContext.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }
