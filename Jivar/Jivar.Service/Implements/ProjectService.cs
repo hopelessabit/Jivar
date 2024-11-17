@@ -56,7 +56,7 @@ namespace Jivar.Service.Implements
             return (await _projectRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<PagedResult<Project>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false)
+        public async Task<PagedResult<ProjectResonse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false)
         {
             // Define the filter for searching by name
             Expression<Func<Project, bool>>? filter = null;
@@ -97,7 +97,7 @@ namespace Jivar.Service.Implements
                 roles.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.ProjectId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
 
                 foreach (var item in result)
-                    item.Roles = roleResponses.FindAll(rr => roles.FindAll(r => r.ProjectId == item.Id).ToList().Select(r => r.AccountId).Contains(rr.accountId));
+                    item.Roles = roleResponses.FindAll(rr => roles.FindAll(r => r.ProjectId == item.Id).ToList().Select(r => r.AccountId).Contains(rr.AccountId));
 
             }
 
@@ -107,12 +107,12 @@ namespace Jivar.Service.Implements
                 : _projectRepository.GetAllWithPagingAndSorting(filter).Count();
 
             // Return the paginated result
-            return new PagedResult<Project>
+            return new PagedResult<ProjectResonse>
             {
                 TotalRecords = totalRecords,
                 PageNumber = pagingParams.PageNumber,
                 PageSize = pagingParams.PageSize,
-                Data = projects.ToList()
+                Data = result
             };
         }
 

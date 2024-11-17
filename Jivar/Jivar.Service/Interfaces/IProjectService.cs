@@ -20,7 +20,7 @@ namespace Jivar.Service.Interfaces
         Task<ProjectResonse> GetProjectResponseById(int id);
 
         // Get all projects
-        Task<List<Project>> GetAllProjects(); Task<PagedResult<Project>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false);
+        Task<PagedResult<ProjectResonse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false);
 
         // Create a new project
         Task<bool> CreateProject(CreateProjectRequest request, HttpContext context);
