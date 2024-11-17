@@ -2,6 +2,7 @@
 using Jivar.BO.Enumarate;
 using Jivar.BO.Models;
 using Jivar.Repository.Interface;
+using Jivar.Service.Exceptions;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Paging;
 using Jivar.Service.Payloads.Account.Response;
@@ -14,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Numerics;
 using System.Text;
 
 namespace Jivar.Service.Implements
@@ -149,6 +149,9 @@ namespace Jivar.Service.Implements
             int accountId = UserUtil.GetAccountId(context);
             Account account = await _accountSerivce.GetAccountById(accountId);
 
+            List<Project> existedProject = (await _projectRepository.GetAllAsync(ft => ft.CreateBy == accountId)).ToList();
+            if (existedProject.Find(ep => ep.Name == request.Name) != null)
+                throw new ExistedException($"Existed project with the same name: {request.Name}");
             // Create a new project
             var project = new Project
             {
