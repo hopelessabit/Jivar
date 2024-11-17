@@ -43,6 +43,7 @@
         {
             public const string DocumentEndpoint = ApiEndpoint + "/document";
             public const string UploadFile = DocumentEndpoint + "/uploadFile";
+            public const string GetDocumentById = DocumentEndpoint + "/{id}";
         }
     }
 }
