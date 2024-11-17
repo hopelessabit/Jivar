@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using System.Text.Json.Serialization;
 
 internal class Program
 {
@@ -101,13 +100,8 @@ internal class Program
                 ValidAudience = jwtSettings.Audience
             };
         });
-
         builder.Services.AddControllers()
-       .AddJsonOptions(o =>
-       {
-           o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-           o.JsonSerializerOptions.WriteIndented = true; // Định dạng đẹp
-       });
+          .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; });
 
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -123,6 +117,9 @@ internal class Program
         builder.Services.AddScoped<ITaskRepository, TaskRepository>();
         builder.Services.AddScoped<ISubTaskRepository, SubTaskRepository>();
         builder.Services.AddScoped<IGroupTaskRepository, GroupTaskRepository>();
+        builder.Services.AddScoped<IBacklogRepository, BacklogRepository>();
+        builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+        builder.Services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -132,6 +129,9 @@ internal class Program
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddScoped<ISubTaskService, SubTaskService>();
         builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
+        builder.Services.AddScoped<IBacklogService, BacklogService>();
+        builder.Services.AddScoped<IProjectService, ProjectService>();
+        builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<ITaskDocumentService, TaskDocumentService>();
 

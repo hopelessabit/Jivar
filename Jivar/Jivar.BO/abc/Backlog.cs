@@ -1,12 +1,15 @@
-﻿namespace Jivar.BO.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Backlog
+namespace Jivar.BO.abc;
+
+public partial class Backlog
 {
     public int Id { get; set; }
 
     public int? ProjectId { get; set; }
 
-    public string Content { get; set; }
+    public string? Content { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -16,5 +19,5 @@ public class Backlog
 
     public DateTime? CreateTime { get; set; }
 
-    public virtual Task Task { get; set; }
+    public virtual Task? Task { get; set; }
 }

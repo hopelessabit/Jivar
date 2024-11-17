@@ -48,10 +48,10 @@ namespace Jivar.Service.Implements
 
             var claims = new List<Claim>
             {
-            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
-            new Claim(ClaimTypes.Email, account.Email),
-            new Claim(ClaimTypes.Role, account.Role)
-        };
+                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+                new Claim(ClaimTypes.Email, account.Email),
+                new Claim(ClaimTypes.Role, account.Role)
+            };
             if (actorId.HasValue)
             {
                 claims.Add(new Claim("actorId", actorId.Value.ToString()));

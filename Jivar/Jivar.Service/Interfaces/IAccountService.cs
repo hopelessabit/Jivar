@@ -7,5 +7,7 @@ namespace Jivar.Service.Interfaces
     {
         Task<bool> IsEmailExist(string email);
         Task<bool> AddAccount(Account account);
+        Task<List<Account>> GetAccountsByIds(List<int> ids);
+        Task<Account> GetAccountById(int id);
     }
 }
