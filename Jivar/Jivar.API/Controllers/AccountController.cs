@@ -69,6 +69,8 @@ namespace Jivar.API.Controllers
             var account = new Account()
             {
                 Email = AccountRequest.Email,
+                Name = AccountRequest.Name,
+                Username = AccountRequest.Username,
                 Password = PasswordUtil.HashPassword(AccountRequest.Password),
                 Role = Service.Enums.RoleEnums.US.GetDescriptionFromEnum(),
                 Gender = AccountRequest.Gender,
