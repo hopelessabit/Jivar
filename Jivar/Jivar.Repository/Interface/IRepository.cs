@@ -1,9 +1,16 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System.Linq.Expressions;
 
 namespace Jivar.Repository.Interface
 {
     public interface IRepository<T> where T : class
     {
+        public IEnumerable<T> GetAllWithPagingAndSorting(
+            Expression<Func<T, bool>>? filter = null,
+            string? includeProperties = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageNumber = 1,
+            int pageSize = 10);
         /// <summary>
         /// Adds a single entity to the database.
         /// </summary>
@@ -134,5 +141,6 @@ namespace Jivar.Repository.Interface
         /// <returns>A task that represents the asynchronous operation. Returns the first entity that matches the filter, or null if no match is found.</returns>
         Task<T?> GetAsync(Expression<Func<T, bool>> filter, string? includeProperties = null);
 
+        Task<IDbContextTransaction> BeginTransactionAsync();
     }
 }

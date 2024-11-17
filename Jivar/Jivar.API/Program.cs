@@ -119,6 +119,9 @@ internal class Program
         builder.Services.AddScoped<ITaskRepository, TaskRepository>();
         builder.Services.AddScoped<ISubTaskRepository, SubTaskRepository>();
         builder.Services.AddScoped<IGroupTaskRepository, GroupTaskRepository>();
+        builder.Services.AddScoped<IBacklogRepository, BacklogRepository>();
+        builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+        builder.Services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -128,6 +131,9 @@ internal class Program
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddScoped<ISubTaskService, SubTaskService>();
         builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
+        builder.Services.AddScoped<IBacklogService, BacklogService>();
+        builder.Services.AddScoped<IProjectService, ProjectService>();
+        builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
 
 
         // Add services to the container.

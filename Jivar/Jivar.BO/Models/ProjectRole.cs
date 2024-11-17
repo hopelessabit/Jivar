@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Jivar.BO.Enumarate;
 
 namespace Jivar.BO.Models;
 
@@ -9,9 +8,9 @@ public partial class ProjectRole
 
     public int AccountId { get; set; }
 
-    public string Role { get; set; }
+    public ProjectRoleType Role { get; set; }
 
-    public virtual Project Account { get; set; }
+    public virtual Project? Project { get; set; }
 
-    public virtual Account Project { get; set; }
+    public virtual Account? Account { get; set; }
 }
