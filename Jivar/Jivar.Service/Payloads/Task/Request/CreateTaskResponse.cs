@@ -16,7 +16,7 @@ namespace Jivar.Service.Payloads.Task.Request
 
         public int? Assignee { get; set; }
 
-        public int? DocumentId { get; set; }
+        public int DocumentId { get; set; }
 
         [CompareDate("endDateSprintTask", ErrorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc")]
         [Required]

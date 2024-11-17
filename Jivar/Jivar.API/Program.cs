@@ -132,6 +132,8 @@ internal class Program
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddScoped<ISubTaskService, SubTaskService>();
         builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
+        builder.Services.AddScoped<IDocumentService, DocumentService>();
+        builder.Services.AddScoped<ITaskDocumentService, TaskDocumentService>();
 
 
         // Add services to the container.

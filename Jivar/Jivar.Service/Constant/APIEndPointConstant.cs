@@ -38,5 +38,11 @@
             public const string GetTaskByIV2 = SubTaskEndpoint + "/taskId={taskId}";
             public const string UpdateStatusTask = SubTaskEndpoint + "/update-status/{id}";
         }
+
+        public static class DocumentE
+        {
+            public const string DocumentEndpoint = ApiEndpoint + "/document";
+            public const string UploadFile = DocumentEndpoint + "/uploadFile";
+        }
     }
 }
