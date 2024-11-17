@@ -24,7 +24,7 @@ namespace Jivar.API.Controllers
             _taskService = taskService;
         }
 
-        [HttpPost(APIEndPointConstant.TaskE.CreateTask)]
+        [HttpPost(APIEndPointConstant.TaskE.TaskEndpoint)]
         [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateNewTask(int sprintId, [FromBody] CreateTaskRequest request)
         {

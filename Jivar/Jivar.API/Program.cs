@@ -103,8 +103,12 @@ internal class Program
         });
 
         builder.Services.AddControllers()
-             .AddJsonOptions(o => o.JsonSerializerOptions
-                 .ReferenceHandler = ReferenceHandler.Preserve);
+       .AddJsonOptions(o =>
+       {
+           o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+           o.JsonSerializerOptions.WriteIndented = true; // Định dạng đẹp
+       });
+
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
@@ -139,7 +143,6 @@ internal class Program
         builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
-
 
         app.UseCors("AllowSpecificOrigin");
         // Configure the HTTP request pipeline.

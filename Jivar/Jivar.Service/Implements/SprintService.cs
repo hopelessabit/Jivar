@@ -23,7 +23,7 @@ namespace Jivar.Service.Implements
             return await _sprintRepository.GetAllAsync();
         }
 
-        public async Task<Sprint?> getSprintById(int? sprintId)
+        public async Task<Sprint> getSprintById(int? sprintId)
         {
             var result = await _sprintRepository.GetAsync(sp => sp.Id == sprintId);
             return result != null ? result : null;
