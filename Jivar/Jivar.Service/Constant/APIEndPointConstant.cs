@@ -30,7 +30,15 @@
             public const string TaskEndpoint = ApiEndpoint + "/task";
             public const string CreateTask = TaskEndpoint + "/{sprintId}";
             public const string GetTaskById = TaskEndpoint + "/{id}";
-            public const string UpdateTask = TaskEndpoint + "/{id}";
+            public const string UpdateStatusTask = TaskEndpoint + "/update-status/{id}";
+        }
+
+        public static class SubTaskE
+        {
+            public const string SubTaskEndpoint = ApiEndpoint + "/subTask";
+            public const string CreateSubTask = SubTaskEndpoint + "/{taskId}";
+            public const string GetTaskById = SubTaskEndpoint + "/{id}";
+            public const string UpdateStatusTask = SubTaskEndpoint + "/update-status/{id}";
         }
     }
 }

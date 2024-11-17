@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Jivar.Service.Payloads.Task.Request
 {
-    public class CreateTaskRequest
+    public class UpdateTaskRequest
     {
-
         [Required]
         public string? Title { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using Jivar.BO.Models;
+﻿using Jivar.BO;
+using Jivar.BO.Models;
 
 namespace Jivar.DAO.DAOs
 {

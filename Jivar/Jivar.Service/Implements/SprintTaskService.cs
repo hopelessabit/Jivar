@@ -24,5 +24,13 @@ namespace Jivar.Service.Implements
             return await _sprintTaskRepository.AddAsync(sprintTask);
         }
 
+        public async Task<bool> updateSprintTask(int id, DateTime? startDateSprintTask, DateTime? endDateSprintTask)
+        {
+            var sprintTask = _sprintTaskRepository.Get(sp => sp.TaskId == id);
+            sprintTask.StartDate.Equals(startDateSprintTask);
+            sprintTask.StartDate.Equals(endDateSprintTask);
+            return await _sprintTaskRepository.UpdateAsync(sprintTask);
+
+        }
     }
 }

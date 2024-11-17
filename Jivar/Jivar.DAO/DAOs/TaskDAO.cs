@@ -1,4 +1,5 @@
-﻿using Task = Jivar.BO.Models.Task;
+﻿using Jivar.BO;
+using Task = Jivar.BO.Models.Task;
 
 namespace Jivar.DAO.DAOs
 {

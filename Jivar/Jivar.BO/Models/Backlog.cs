@@ -9,7 +9,7 @@ public partial class Backlog
 
     public int? ProjectId { get; set; }
 
-    public string? Content { get; set; }
+    public string Content { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -19,5 +19,5 @@ public partial class Backlog
 
     public DateTime? CreateTime { get; set; }
 
-    public virtual Task? Task { get; set; }
+    public virtual Task Task { get; set; }
 }

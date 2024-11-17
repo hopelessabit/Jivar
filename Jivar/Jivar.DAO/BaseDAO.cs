@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Jivar.BO;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Jivar.DAO
