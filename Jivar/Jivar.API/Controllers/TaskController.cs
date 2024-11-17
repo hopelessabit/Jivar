@@ -4,6 +4,7 @@ using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Task.Request;
 using Jivar.Service.Payloads.Task.Response;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Jivar.API.Controllers
@@ -25,7 +26,7 @@ namespace Jivar.API.Controllers
 
         [HttpPost(APIEndPointConstant.TaskE.CreateTask)]
         [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
-        public async Task<ActionResult> CreateNewSprint(int sprintId, [FromBody] CreateTaskRequest request)
+        public async Task<ActionResult> CreateNewTask(int sprintId, [FromBody] CreateTaskRequest request)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (request == null || sprintId == null)
@@ -67,6 +68,50 @@ namespace Jivar.API.Controllers
             return StatusCode(StatusCodes.Status200OK, response);
         }
 
+        [HttpGet(APIEndPointConstant.TaskE.TaskEndpoint)]
+        [ProducesResponseType(typeof(IEnumerable<BO.Models.Task>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> getTasks()
+        {
+            IEnumerable<BO.Models.Task> taskResponse = _taskService.getTasks();
+            var response = new ApiResponse<IEnumerable<BO.Models.Task>>(StatusCodes.Status200OK, "Lấy danh sách task thành công", taskResponse);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
 
+        [HttpGet(APIEndPointConstant.TaskE.GetTaskById)]
+        [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
+        public async Task<ActionResult> getTasksById(int id)
+        {
+            BO.Models.Task taskResponse = _taskService.getTasksById(id);
+            if (taskResponse == null)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
+            }
+            return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Lấy task thành công", taskResponse));
+        }
+
+        [HttpDelete(APIEndPointConstant.TaskE.UpdateStatusTask)]
+        [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
+        public async Task<ActionResult> getTasksById(int id, [Required] TaskEnum status)
+        {
+            BO.Models.Task taskResponse = _taskService.updateStatus(id, status.ToString());
+            if (taskResponse == null)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
+            }
+            return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Cập nhật trạng thái task thành công", taskResponse));
+        }
+
+        [HttpPut(APIEndPointConstant.TaskE.GetTaskById)]
+        [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
+        public async Task<ActionResult> updateTask([Required] int id, [FromBody] UpdateTaskRequest request)
+        {
+            BO.Models.Task task = _taskService.updateTask(id, request);
+            if (task == null)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
+            }
+            await _sprintTaskService.updateSprintTask(id, request.startDateSprintTask, request.endDateSprintTask);
+            return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Cập nhật thông tin task thành công", task));
+        }
     }
 }

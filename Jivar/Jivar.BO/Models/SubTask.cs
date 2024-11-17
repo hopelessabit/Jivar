@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class SubTask
 {
+
+    public SubTask(string? title, string? description, string status)
+    {
+        Title = title;
+        Description = description;
+        Status = status;
+    }
+
     public int Id { get; set; }
 
     public string? Title { get; set; }

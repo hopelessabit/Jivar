@@ -114,6 +114,8 @@ internal class Program
         builder.Services.AddScoped<ISprintRepository, SprintRepository>();
         builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
         builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+        builder.Services.AddScoped<ISubTaskRepository, SubTaskRepository>();
+        //builder.Services.AddScoped<IGroupTaskRepository, GroupTaskRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -121,6 +123,8 @@ internal class Program
         builder.Services.AddScoped<ISprintService, SprintService>();
         builder.Services.AddScoped<ISprintTaskService, SprintTaskService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
+        builder.Services.AddScoped<ISubTaskService, SubTaskService>();
+        //builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
 
 
         // Add services to the container.

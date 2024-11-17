@@ -1,5 +1,4 @@
-﻿
-using Jivar.BO.Models;
+﻿using Jivar.BO.Models;
 
 namespace Jivar.Service.Interfaces
 {
@@ -7,5 +6,6 @@ namespace Jivar.Service.Interfaces
     {
         Task<bool> AddSprintTask(SprintTask sprintTask);
         Task<bool> deleteSprintTask(int? id);
+        Task<bool> updateSprintTask(int id, DateTime? startDateSprintTask, DateTime? endDateSprintTask);
     }
 }
