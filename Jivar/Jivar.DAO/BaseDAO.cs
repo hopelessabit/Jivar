@@ -1,5 +1,6 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 ﻿using Jivar.BO;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Jivar.DAO
@@ -14,6 +15,39 @@ namespace Jivar.DAO
             _context = context;
             _dbSet = context.Set<T>();
         }
+
+        public IEnumerable<T> GetAllWithPagingAndSorting(
+            Expression<Func<T, bool>>? filter = null,
+            string? includeProperties = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageNumber = 1,
+            int pageSize = 10)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (!string.IsNullOrWhiteSpace(includeProperties))
+            {
+                foreach (var includeProperty in includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
+
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+
+            query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            return query.ToList();
+        }
+
 
         public bool Add(T entity)
         {
@@ -318,6 +352,10 @@ namespace Jivar.DAO
         public async Task<int> CountAsync(Expression<Func<T, bool>>? filter = null)
         {
             return filter != null ? await _dbSet.CountAsync(filter) : await _dbSet.CountAsync();
+        }
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
         }
     }
 }

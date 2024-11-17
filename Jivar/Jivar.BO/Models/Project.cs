@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jivar.BO.Enumarate;
+using System;
 using System.Collections.Generic;
 
 namespace Jivar.BO.Models;
@@ -11,7 +12,7 @@ public partial class Project
 
     public string Description { get; set; }
 
-    public int? CreateBy { get; set; }
+    public int CreateBy { get; set; }
 
     public DateTime? CreateTime { get; set; }
 
@@ -19,9 +20,9 @@ public partial class Project
 
     public decimal? Budget { get; set; }
 
-    public string Status { get; set; }
+    public ProjectStatus Status { get; set; }
 
-    public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = new List<ProjectRole>();
+    public virtual ICollection<ProjectRole>? ProjectRoles { get; set; } = new List<ProjectRole>();
 
-    public virtual ICollection<ProjectSprint> ProjectSprints { get; set; } = new List<ProjectSprint>();
+    public virtual ICollection<ProjectSprint>? ProjectSprints { get; set; } = new List<ProjectSprint>();
 }

@@ -1,33 +1,38 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Jivar.BO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace Jivar.Service.Util
 {
     public class UserUtil
     {
 
-        public static Guid? GetAccountId(HttpContext httpContext)
+        public static int GetAccountId(HttpContext httpContext)
         {
             if (httpContext == null || httpContext.User == null)
             {
-                return null;
+                throw new Exception("Can not read user Id");
             }
 
             var nameIdentifierClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (nameIdentifierClaim == null)
             {
-                return null;
+                throw new Exception("Can not read user Id");
             }
-
-            if (!Guid.TryParse(nameIdentifierClaim.Value, out Guid accountId))
+            int accountId;
+            try
             {
-                throw new BadHttpRequestException(nameIdentifierClaim.Value);
-
+                accountId = int.Parse(nameIdentifierClaim.Value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Can not read user Id");
             }
             return accountId;
         }
-
-
 
         public static string GetRoleName(HttpContext httpContext)
             {

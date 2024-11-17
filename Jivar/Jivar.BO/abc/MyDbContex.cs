@@ -1,19 +1,16 @@
-﻿using Jivar.BO.Enumarate;
-using Jivar.BO.Models;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Configuration;
-using Task = Jivar.BO.Models.Task;
 
-namespace Jivar.BO;
+namespace Jivar.BO.abc;
 
-public partial class JivarDbContext : DbContext
+public partial class MyDbContex : DbContext
 {
-    public JivarDbContext()
+    public MyDbContex()
     {
     }
 
-    public JivarDbContext(DbContextOptions<JivarDbContext> options)
+    public MyDbContex(DbContextOptions<MyDbContex> options)
         : base(options)
     {
     }
@@ -27,8 +24,6 @@ public partial class JivarDbContext : DbContext
     public virtual DbSet<Comment> Comments { get; set; }
 
     public virtual DbSet<Document> Documents { get; set; }
-
-    public virtual DbSet<GroupTask> GroupTasks { get; set; }
 
     public virtual DbSet<Project> Projects { get; set; }
 
@@ -44,21 +39,9 @@ public partial class JivarDbContext : DbContext
 
     public virtual DbSet<Task> Tasks { get; set; }
 
-    public virtual DbSet<TaskDocument> TaskDocuments { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString());
-
-    private string GetConnectionString()
-    {
-        IConfiguration config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", true, true)
-            .Build();
-        var strConn = config["ConnectionStrings:DefaultConnection"];
-        return strConn;
-    }
-
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=150.95.115.166,1433;Uid=sa;Pwd=Fpt1234567890;Database=jivar;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,10 +62,6 @@ public partial class JivarDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("email");
-            entity.Property(e => e.Name)
-                .HasMaxLength(200)
-                .IsUnicode(true)
-                .HasColumnName("name");
             entity.Property(e => e.Gender)
                 .HasMaxLength(20)
                 .IsUnicode(false)
@@ -197,26 +176,6 @@ public partial class JivarDbContext : DbContext
                 .HasColumnName("upload_date");
         });
 
-        modelBuilder.Entity<GroupTask>(entity =>
-        {
-            entity.HasKey(e => new { e.TaskId, e.SubtaskId }).HasName("PK__group_ta__48B8D17D3FC89BB3");
-
-            entity.ToTable("group_task");
-
-            entity.Property(e => e.TaskId).HasColumnName("task_id");
-            entity.Property(e => e.SubtaskId).HasColumnName("subtask_id");
-
-            entity.HasOne(d => d.Subtask).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.SubtaskId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__group_tas__subta__5165187F");
-
-            entity.HasOne(d => d.Task).WithMany(p => p.GroupTasks)
-                .HasForeignKey(d => d.TaskId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__group_tas__task___5070F446");
-        });
-
         modelBuilder.Entity<Project>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__project__3213E83FA7385C0F");
@@ -238,10 +197,6 @@ public partial class JivarDbContext : DbContext
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
-                .HasConversion(new ValueConverter<ProjectStatus, string>(
-                    v => v.ToString(),
-                    v => Enum.Parse<ProjectStatus>(v, true)
-                ))
                 .IsUnicode(false)
                 .HasColumnName("status");
         });
@@ -256,10 +211,6 @@ public partial class JivarDbContext : DbContext
             entity.Property(e => e.AccountId).HasColumnName("account_id");
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
-                .HasConversion(new ValueConverter<ProjectRoleType, string>(
-                    v => v.ToString(),
-                    v => Enum.Parse<ProjectRoleType>(v, true) 
-                ))
                 .IsUnicode(false)
                 .HasColumnName("role");
 
@@ -381,27 +332,44 @@ public partial class JivarDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("status");
             entity.Property(e => e.Title).HasColumnName("title");
-        });
 
-        modelBuilder.Entity<TaskDocument>(entity =>
-        {
-            entity.HasKey(e => new { e.TaskId, e.DocumentId }).HasName("PK__task_doc__DDF47A079D026BA5");
+            entity.HasMany(d => d.Documents).WithMany(p => p.Tasks)
+                .UsingEntity<Dictionary<string, object>>(
+                    "TaskDocument",
+                    r => r.HasOne<Document>().WithMany()
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__task_docu__docum__5812160E"),
+                    l => l.HasOne<Task>().WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__task_docu__task___571DF1D5"),
+                    j =>
+                    {
+                        j.HasKey("TaskId", "DocumentId").HasName("PK__task_doc__DDF47A079D026BA5");
+                        j.ToTable("task_document");
+                        j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
+                        j.IndexerProperty<int>("DocumentId").HasColumnName("document_id");
+                    });
 
-            entity.ToTable("task_document");
-
-            entity.Property(e => e.TaskId).HasColumnName("task_id");
-            entity.Property(e => e.DocumentId).HasColumnName("document_id");
-
-
-            entity.HasOne(d => d.Document).WithMany(p => p.TaskDocuments)
-                .HasForeignKey(d => d.DocumentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__task_docu__docum__5812160E");
-
-            entity.HasOne(d => d.Task).WithMany(p => p.TaskDocuments)
-                .HasForeignKey(d => d.TaskId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__task_docu__task___571DF1D5");
+            entity.HasMany(d => d.Subtasks).WithMany(p => p.Tasks)
+                .UsingEntity<Dictionary<string, object>>(
+                    "GroupTask",
+                    r => r.HasOne<SubTask>().WithMany()
+                        .HasForeignKey("SubtaskId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__group_tas__subta__5165187F"),
+                    l => l.HasOne<Task>().WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__group_tas__task___5070F446"),
+                    j =>
+                    {
+                        j.HasKey("TaskId", "SubtaskId").HasName("PK__group_ta__48B8D17D3FC89BB3");
+                        j.ToTable("group_task");
+                        j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
+                        j.IndexerProperty<int>("SubtaskId").HasColumnName("subtask_id");
+                    });
         });
 
         OnModelCreatingPartial(modelBuilder);
