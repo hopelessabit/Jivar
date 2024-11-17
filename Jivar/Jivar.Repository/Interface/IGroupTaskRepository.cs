@@ -1,8 +1,8 @@
-﻿//using Jivar.BO.Models;
+﻿using Jivar.BO.Models;
 
-//namespace Jivar.Repository.Interface
-//{
-//    public interface IGroupTaskRepository : IRepository<GroupTask>
-//    {
-//    }
-//}
+namespace Jivar.Repository.Interface
+{
+    public interface IGroupTaskRepository : IRepository<GroupTask>
+    {
+    }
+}

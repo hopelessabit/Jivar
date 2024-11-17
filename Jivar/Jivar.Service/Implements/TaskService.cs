@@ -1,4 +1,4 @@
-﻿using Jivar.DAO;
+﻿using Jivar.BO;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Task.Request;

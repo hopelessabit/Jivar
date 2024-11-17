@@ -13,7 +13,7 @@ public partial class ProjectSprint
 
     public DateTime? EndDate { get; set; }
 
-    public virtual Project Project { get; set; } = null!;
+    public virtual Project Project { get; set; }
 
-    public virtual Sprint Sprint { get; set; } = null!;
+    public virtual Sprint Sprint { get; set; }
 }

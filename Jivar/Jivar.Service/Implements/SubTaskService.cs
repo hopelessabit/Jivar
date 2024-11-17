@@ -1,5 +1,5 @@
-﻿using Jivar.BO.Models;
-using Jivar.DAO;
+﻿using Jivar.BO;
+using Jivar.BO.Models;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.SubTask.Request;

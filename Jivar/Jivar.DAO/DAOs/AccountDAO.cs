@@ -1,6 +1,6 @@
-﻿using Jivar.BO.Models;
+﻿using Jivar.BO;
+using Jivar.BO.Models;
 using Jivar.DAO.Interface;
-using Microsoft.Identity.Client;
 
 namespace Jivar.DAO.DAOs
 {

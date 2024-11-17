@@ -1,5 +1,4 @@
 ﻿using Jivar.BO;
-using Jivar.DAO;
 using Jivar.DAO.DAOs;
 using Jivar.DAO.Interface;
 using Jivar.Repository;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 internal class Program
 {
@@ -102,6 +102,9 @@ internal class Program
             };
         });
 
+        builder.Services.AddControllers()
+             .AddJsonOptions(o => o.JsonSerializerOptions
+                 .ReferenceHandler = ReferenceHandler.Preserve);
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
@@ -115,7 +118,7 @@ internal class Program
         builder.Services.AddScoped<ISprintTaskRepository, SprintTaskRepository>();
         builder.Services.AddScoped<ITaskRepository, TaskRepository>();
         builder.Services.AddScoped<ISubTaskRepository, SubTaskRepository>();
-        //builder.Services.AddScoped<IGroupTaskRepository, GroupTaskRepository>();
+        builder.Services.AddScoped<IGroupTaskRepository, GroupTaskRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -124,7 +127,7 @@ internal class Program
         builder.Services.AddScoped<ISprintTaskService, SprintTaskService>();
         builder.Services.AddScoped<ITaskService, TaskService>();
         builder.Services.AddScoped<ISubTaskService, SubTaskService>();
-        //builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
+        builder.Services.AddScoped<IGroupTaskService, GroupTaskService>();
 
 
         // Add services to the container.

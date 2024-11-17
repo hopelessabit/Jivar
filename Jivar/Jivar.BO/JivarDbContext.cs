@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Task = Jivar.BO.Models.Task;
 
-namespace Jivar.DAO;
+namespace Jivar.BO;
 
 public partial class JivarDbContext : DbContext
 {
@@ -26,6 +26,8 @@ public partial class JivarDbContext : DbContext
 
     public virtual DbSet<Document> Documents { get; set; }
 
+    public virtual DbSet<GroupTask> GroupTasks { get; set; }
+
     public virtual DbSet<Project> Projects { get; set; }
 
     public virtual DbSet<ProjectRole> ProjectRoles { get; set; }
@@ -39,18 +41,22 @@ public partial class JivarDbContext : DbContext
     public virtual DbSet<SubTask> SubTasks { get; set; }
 
     public virtual DbSet<Task> Tasks { get; set; }
-    private string? GetConnectionString()
+
+    public virtual DbSet<TaskDocument> TaskDocuments { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.UseSqlServer(GetConnectionString());
+
+    private string GetConnectionString()
     {
         IConfiguration config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true, true)
             .Build();
-
-        return config.GetConnectionString("DefaultConnection");
+        var strConn = config["ConnectionStrings:DefaultConnection"];
+        return strConn;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(GetConnectionString());
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -71,20 +77,19 @@ public partial class JivarDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("email");
-            entity.Property(e => e.Name)
-                .HasMaxLength(50)
-                .IsUnicode(true)
-                .HasColumnName("name");
             entity.Property(e => e.Gender)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("gender");
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
+                .HasColumnName("name");
             entity.Property(e => e.Password)
-                .HasMaxLength(50)
+                .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("password");
             entity.Property(e => e.Phone)
-                .HasMaxLength(11)
+                .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("phone");
             entity.Property(e => e.Role)
@@ -184,6 +189,26 @@ public partial class JivarDbContext : DbContext
             entity.Property(e => e.UploadDate)
                 .HasColumnType("datetime")
                 .HasColumnName("upload_date");
+        });
+
+        modelBuilder.Entity<GroupTask>(entity =>
+        {
+            entity.HasKey(e => new { e.TaskId, e.SubtaskId }).HasName("PK__group_ta__48B8D17D3FC89BB3");
+
+            entity.ToTable("group_task");
+
+            entity.Property(e => e.TaskId).HasColumnName("task_id");
+            entity.Property(e => e.SubtaskId).HasColumnName("subtask_id");
+
+            entity.HasOne(d => d.Subtask).WithMany(p => p.GroupTasks)
+                .HasForeignKey(d => d.SubtaskId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__group_tas__subta__5165187F");
+
+            entity.HasOne(d => d.Task).WithMany(p => p.GroupTasks)
+                .HasForeignKey(d => d.TaskId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__group_tas__task___5070F446");
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -342,44 +367,27 @@ public partial class JivarDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("status");
             entity.Property(e => e.Title).HasColumnName("title");
+        });
 
-            entity.HasMany(d => d.Documents).WithMany(p => p.Tasks)
-                .UsingEntity<Dictionary<string, object>>(
-                    "TaskDocument",
-                    r => r.HasOne<Document>().WithMany()
-                        .HasForeignKey("DocumentId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__task_docu__docum__5812160E"),
-                    l => l.HasOne<Task>().WithMany()
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__task_docu__task___571DF1D5"),
-                    j =>
-                    {
-                        j.HasKey("TaskId", "DocumentId").HasName("PK__task_doc__DDF47A079D026BA5");
-                        j.ToTable("task_document");
-                        j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
-                        j.IndexerProperty<int>("DocumentId").HasColumnName("document_id");
-                    });
+        modelBuilder.Entity<TaskDocument>(entity =>
+        {
+            entity.HasKey(e => new { e.TaskId, e.DocumentId }).HasName("PK__task_doc__DDF47A079D026BA5");
 
-            entity.HasMany(d => d.Subtasks).WithMany(p => p.Tasks)
-                .UsingEntity<Dictionary<string, object>>(
-                    "GroupTask",
-                    r => r.HasOne<SubTask>().WithMany()
-                        .HasForeignKey("SubtaskId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__group_tas__subta__5165187F"),
-                    l => l.HasOne<Task>().WithMany()
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__group_tas__task___5070F446"),
-                    j =>
-                    {
-                        j.HasKey("TaskId", "SubtaskId").HasName("PK__group_ta__48B8D17D3FC89BB3");
-                        j.ToTable("group_task");
-                        j.IndexerProperty<int>("TaskId").HasColumnName("task_id");
-                        j.IndexerProperty<int>("SubtaskId").HasColumnName("subtask_id");
-                    });
+            entity.ToTable("task_document");
+
+            entity.Property(e => e.TaskId).HasColumnName("task_id");
+            entity.Property(e => e.DocumentId).HasColumnName("document_id");
+
+
+            entity.HasOne(d => d.Document).WithMany(p => p.TaskDocuments)
+                .HasForeignKey(d => d.DocumentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__task_docu__docum__5812160E");
+
+            entity.HasOne(d => d.Task).WithMany(p => p.TaskDocuments)
+                .HasForeignKey(d => d.TaskId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__task_docu__task___571DF1D5");
         });
 
         OnModelCreatingPartial(modelBuilder);

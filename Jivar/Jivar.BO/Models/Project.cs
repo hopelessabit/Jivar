@@ -7,9 +7,9 @@ public partial class Project
 {
     public int Id { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     public int? CreateBy { get; set; }
 
@@ -19,7 +19,7 @@ public partial class Project
 
     public decimal? Budget { get; set; }
 
-    public string? Status { get; set; }
+    public string Status { get; set; }
 
     public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = new List<ProjectRole>();
 
