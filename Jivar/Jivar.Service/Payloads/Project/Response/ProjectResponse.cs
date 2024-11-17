@@ -5,7 +5,7 @@ using Jivar.Service.Payloads.ProjectRole.Response;
 
 namespace Jivar.Service.Payloads.Project.Response
 {
-    public class ProjectResonse
+    public class ProjectResponse
     {
 
         public int Id { get; set; }
@@ -25,7 +25,7 @@ namespace Jivar.Service.Payloads.Project.Response
         public string Status { get; set; }
         public List<ProjectRoleResponse> Roles { get; set; }
 
-        public ProjectResonse(ModelProject project, AccountModel createBy)
+        public ProjectResponse(ModelProject project, AccountModel createBy)
         {
             Id = project.Id;
             Name = project.Name;
@@ -37,7 +37,7 @@ namespace Jivar.Service.Payloads.Project.Response
             Status = project.Status.ToString();
         }
 
-        public ProjectResonse(ModelProject project, AccountInfoResponse createBy)
+        public ProjectResponse(ModelProject project, AccountInfoResponse createBy)
         {
             Id = project.Id;
             Name = project.Name;

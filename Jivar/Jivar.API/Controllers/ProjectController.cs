@@ -55,10 +55,7 @@ namespace Jivar.API.Controllers
         {
             try
             {
-                var success = await _projectService.CreateProject(request, HttpContext);
-                if (success)
-                    return Ok(new { message = "Project created successfully." });
-                return BadRequest(new { message = "Failed to create project." });
+                return Ok(await _projectService.CreateProject(request, HttpContext));
             }
             catch (Exception ex)
             {

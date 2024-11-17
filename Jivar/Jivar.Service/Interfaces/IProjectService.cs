@@ -17,13 +17,13 @@ namespace Jivar.Service.Interfaces
         Task<Project> GetProjectById(int id);
 
         // Get a Project Response By ID
-        Task<ProjectResonse> GetProjectResponseById(int id);
+        Task<ProjectResponse> GetProjectResponseById(int id);
 
         // Get all projects
-        Task<PagedResult<ProjectResonse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false);
+        Task<PagedResult<ProjectResponse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false);
 
         // Create a new project
-        Task<bool> CreateProject(CreateProjectRequest request, HttpContext context);
+        Task<ProjectResponse> CreateProject(CreateProjectRequest request, HttpContext context);
 
         // Update an existing project
         Task<bool> UpdateProject(int projectId, UpdateProjectRequest request, HttpContext context);

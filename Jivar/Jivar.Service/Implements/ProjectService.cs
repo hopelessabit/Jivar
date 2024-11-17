@@ -43,11 +43,11 @@ namespace Jivar.Service.Implements
             return project;
         }
 
-        public async Task<ProjectResonse> GetProjectResponseById(int id)
+        public async Task<ProjectResponse> GetProjectResponseById(int id)
         {
             Project project = await GetProjectById(id);
             Account createBy = await _accountSerivce.GetAccountById(project.CreateBy);
-            return new ProjectResonse(project, createBy);
+            return new ProjectResponse(project, createBy);
         }
 
         // Get all projects
@@ -56,7 +56,7 @@ namespace Jivar.Service.Implements
             return (await _projectRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<PagedResult<ProjectResonse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false)
+        public async Task<PagedResult<ProjectResponse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false)
         {
             // Define the filter for searching by name
             Expression<Func<Project, bool>>? filter = null;
@@ -86,7 +86,7 @@ namespace Jivar.Service.Implements
 
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
-            List<ProjectResonse> result = projects.Select(p => new ProjectResonse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
+            List<ProjectResponse> result = projects.Select(p => new ProjectResponse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
             
             if (includeRole != null && includeRole.Value)
             {
@@ -109,7 +109,7 @@ namespace Jivar.Service.Implements
                 : _projectRepository.GetAllWithPagingAndSorting(filter).Count();
 
             // Return the paginated result
-            return new PagedResult<ProjectResonse>
+            return new PagedResult<ProjectResponse>
             {
                 TotalRecords = totalRecords,
                 PageNumber = pagingParams.PageNumber,
@@ -140,7 +140,7 @@ namespace Jivar.Service.Implements
 
 
         // Create a new project
-        public async Task<bool> CreateProject(CreateProjectRequest request, HttpContext context)
+        public async Task<ProjectResponse> CreateProject(CreateProjectRequest request, HttpContext context)
         {
             // Validate the request
             if (request == null)
@@ -187,7 +187,9 @@ namespace Jivar.Service.Implements
                 _projectRepository.Delete(project);
                 throw new Exception("Failed to add the user's role to the project.");
             }
-            return true;
+
+            Project resultProject = _projectRepository.GetAll(p => p.CreateBy == accountId).OrderByDescending(p => p.Id).FirstOrDefault();
+            return new ProjectResponse(project, account);
         }
 
 
