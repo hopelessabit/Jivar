@@ -56,6 +56,7 @@
             public const string CommentEndpoint = ApiEndpoint + "/comment";
             public const string GetCommentEndpoint = CommentEndpoint + "/{taskId}";
             public const string GetCommentByIdEndpoint = CommentEndpoint + "/{id}";
+            public const string ReplyCommentByIdEndpoint = CommentEndpoint + "/reply/{commentId}";
         }
     }
 }
