@@ -1,6 +1,11 @@
-﻿using Jivar.Service.Interfaces;
+﻿using Jivar.Service.Constant;
+using Jivar.Service.Interfaces;
 using Jivar.Service.Paging;
 using Jivar.Service.Payloads.Project.Request;
+using Jivar.Service.Payloads.Project.Response;
+using Jivar.Service.Payloads.Sprint.Response;
+using Jivar.Service.PayLoads;
+using Jivar.Service.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jivar.API.Controllers
@@ -45,6 +50,30 @@ namespace Jivar.API.Controllers
             {
                 // Call the service to get paginated, sorted, and optionally filtered projects
                 var result = await _projectService.GetProjects(pagingParams, searchTerm, includeSprint, includeRole, includeTask);
+
+                // Return the result with an OK status
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and return a BadRequest status with the error message
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet(APIEndPointConstant.ProjectE.GetProjectByUserId)]
+        [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProjectsByUserId(
+            [FromQuery] PagingAndSortingParams pagingParams,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] bool? includeRole = null,
+            [FromQuery] bool? includeSprint = null,
+            [FromQuery] bool? includeTask = null)
+        {
+            try
+            {
+                // Call the service to get paginated, sorted, and optionally filtered projects
+                var result = await _projectService.GetProjectByUserId(UserUtil.GetAccountId(HttpContext), pagingParams, searchTerm, includeSprint, includeRole, includeTask);
 
                 // Return the result with an OK status
                 return Ok(result);

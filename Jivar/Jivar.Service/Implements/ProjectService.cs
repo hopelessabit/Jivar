@@ -91,6 +91,107 @@ namespace Jivar.Service.Implements
             return (await _projectRepository.GetAllAsync()).ToList();
         }
 
+        public async Task<PagedResult<ProjectResponse>> GetProjectByUserId(int userId, 
+            PagingAndSortingParams pagingParams, 
+            string? searchTerm = null, 
+            bool? includeSprint = false, 
+            bool? includeRole = false, 
+            bool? includeTask = false)
+        {
+            pagingParams.IncludeProperties = "ProjectRoles";
+
+            Expression<Func<Project, bool>>? filter = null;
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                string normalizedSearchTerm = RemoveDiacritics(searchTerm.ToLower());
+
+                filter = p => RemoveDiacritics(p.Name.ToLower()).Contains(normalizedSearchTerm);
+            }
+            // ProjectRoles filter
+            Expression<Func<Project, bool>> projectRolesFilter = p =>
+                p.ProjectRoles.Select(pr => pr.AccountId).Contains(userId);
+            if (filter != null)
+            {
+                filter = p => filter.Compile()(p) && projectRolesFilter.Compile()(p);
+            }
+            else
+            {
+                filter = projectRolesFilter;
+            }
+
+            // Define the sorting logic
+            Func<IQueryable<Project>, IOrderedQueryable<Project>>? orderBy = null;
+            if (!string.IsNullOrEmpty(pagingParams.SortBy))
+            {
+                orderBy = pagingParams.IsDescending
+                    ? q => q.OrderByDescending(e => EF.Property<object>(e, pagingParams.SortBy))
+                    : q => q.OrderBy(e => EF.Property<object>(e, pagingParams.SortBy));
+            }
+
+            // Fetch data using the repository method
+            var projects = _projectRepository.GetAllWithPagingAndSorting(
+                filter: filter,
+                includeProperties: pagingParams.IncludeProperties,
+                orderBy: orderBy,
+                pageNumber: pagingParams.PageNumber,
+                pageSize: pagingParams.PageSize
+            );
+
+            List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
+
+            List<ProjectResponse> result = projects.Select(p => new ProjectResponse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
+
+            if (includeRole != null && includeRole.Value)
+            {
+                List<ProjectRole> roles = await _roleService.GetProjectRolesByIds(projects.Select(p => p.Id).ToList());
+                accountInfos.AddRange((await _accountSerivce.GetAccountsByIds(roles.Select(r => r.AccountId).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList());
+
+                foreach (var item in result)
+                {
+                    List<ProjectRole> rolesForProject = roles.FindAll(r => r.ProjectId == item.Id).ToList();
+                    if (rolesForProject == null) continue;
+                    List<ProjectRoleResponse> roleResponses = new List<ProjectRoleResponse>();
+                    rolesForProject.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.AccountId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
+                    item.Roles = roleResponses.FindAll(rr => roles.FindAll(r => r.ProjectId == item.Id).ToList().Select(r => r.AccountId).Contains(rr.AccountId));
+                }
+
+            }
+
+            if (includeSprint != null && includeSprint.Value)
+            {
+                List<int> projectIds = projects.Select(p => p.Id).ToList();
+                List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
+                if (projectSprints.Any())
+                {
+                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
+
+                    foreach (ProjectResponse item in result)
+                    {
+                        ProjectResponse a = item;
+                        List<ProjectSprint> projectSprintsForProject = projectSprints.FindAll(ps => ps.ProjectId == item.Id).ToList();
+                        if (projectSprintsForProject == null)
+                            continue;
+                        List<SprintResponse> sprintsForProject = sprints.FindAll(s => projectSprintsForProject.Select(ps => ps.SprintId).ToList().Contains(s.Id)).ToList();
+                        item.Sprints = sprintsForProject;
+                    }
+                }
+            }
+
+            // Calculate the total record count
+            var totalRecords = filter == null
+                ? _projectRepository.GetAllWithPagingAndSorting().Count()
+                : _projectRepository.GetAllWithPagingAndSorting(filter).Count();
+
+            // Return the paginated result
+            return new PagedResult<ProjectResponse>
+            {
+                TotalRecords = totalRecords,
+                PageNumber = pagingParams.PageNumber,
+                PageSize = pagingParams.PageSize,
+                Data = result
+            };
+        }
+
         public async Task<PagedResult<ProjectResponse>> GetProjects(
             PagingAndSortingParams pagingParams,
             string? searchTerm = null,

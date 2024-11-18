@@ -9,6 +9,11 @@
         public const string ApiVersion = "/v1";
         public const string ApiEndpoint = RootEndPoint + ApiVersion;
 
+        public static class ProjectE
+        {
+            public const string GetProjectByUserId = ApiEndpoint + "/user";
+        }
+
         public static class Authentication
         {
             public const string AuthenticationEndpoint = ApiEndpoint + "/auth";

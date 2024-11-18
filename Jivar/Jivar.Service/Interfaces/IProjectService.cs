@@ -3,6 +3,7 @@ using Jivar.Service.Paging;
 using Jivar.Service.Payloads.Project.Request;
 using Jivar.Service.Payloads.Project.Response;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,5 +31,7 @@ namespace Jivar.Service.Interfaces
 
         // Delete a project
         Task<bool> DeleteProject(int projectId);
+
+        Task<PagedResult<ProjectResponse>> GetProjectByUserId(int userId, PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false, bool? includeTask = false);
     }
 }
