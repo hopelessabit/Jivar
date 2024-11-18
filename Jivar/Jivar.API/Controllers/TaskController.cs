@@ -1,6 +1,7 @@
 ﻿using Jivar.BO.Models;
 using Jivar.Service.Constant;
 using Jivar.Service.Enums;
+using Jivar.Service.Exceptions;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Tasks.Request;
 using Jivar.Service.Payloads.Tasks.Response;
@@ -33,6 +34,10 @@ namespace Jivar.API.Controllers
         [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateNewTask(int sprintId, [FromBody] CreateTaskRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (request == null || sprintId == null)
             {
@@ -50,10 +55,19 @@ namespace Jivar.API.Controllers
                 DocumentId = request.DocumentId,
                 Status = TaskEnum.IN_PROGRESS.ToString(),
             };
-            var result = _taskService.CreateTask(task);
+            BO.Models.Task result;
+            try
+            {
+                result = _taskService.CreateTask(task);
+            } catch (BadRequestException ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
+            }
 
-            var documentTask = new TaskDocument(task.Id, request.DocumentId);
-            _taskDocumentService.createTaskDocument(documentTask);
+            if (request.DocumentId.HasValue){
+                var documentTask = new TaskDocument(task.Id, request.DocumentId.Value);
+                _taskDocumentService.createTaskDocument(documentTask);
+            }
             var sprintTask = new BO.Models.SprintTask()
             {
                 SprintId = sprintId,

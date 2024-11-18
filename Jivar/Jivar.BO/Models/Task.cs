@@ -9,7 +9,7 @@ public partial class Task
 
     public string Title { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     public int? CreateBy { get; set; }
 

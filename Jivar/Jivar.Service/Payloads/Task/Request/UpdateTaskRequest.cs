@@ -7,8 +7,6 @@ namespace Jivar.Service.Payloads.Tasks.Request
     {
         [Required]
         public string? Title { get; set; }
-
-        [Required]
         public string? Description { get; set; }
 
         public int? AssignBy { get; set; }
@@ -18,10 +16,8 @@ namespace Jivar.Service.Payloads.Tasks.Request
         public int? DocumentId { get; set; }
 
         [CompareDate("endDateSprintTask", ErrorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc")]
-        [Required]
         public DateTime? startDateSprintTask { get; set; }
 
-        [Required]
         public DateTime? endDateSprintTask { get; set; }
     }
 }

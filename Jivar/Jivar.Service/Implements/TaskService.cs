@@ -1,5 +1,7 @@
 ﻿using Jivar.BO;
+using Jivar.BO.Models;
 using Jivar.Service.Enums;
+using Jivar.Service.Exceptions;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Tasks.Request;
 
@@ -55,13 +57,26 @@ namespace Jivar.Service.Implements
         {
             BO.Models.Task task = null;
             task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
+            SprintTask sprintTask = _dbContext.SprintTasks.FirstOrDefault(st => st.TaskId == task.Id);
+            if (sprintTask != null) 
+            {
+                if (request.endDateSprintTask != null && sprintTask.StartDate == null && request.startDateSprintTask == null)
+                    throw new BadRequestException("Task must have Start date");
+                else if (request.endDateSprintTask != null && sprintTask.StartDate != null && sprintTask.StartDate > request.endDateSprintTask)
+                    throw new Exception("Start date must smaller than End date");
+            } else
+            {
+                if (request.endDateSprintTask != null && request.startDateSprintTask == null)
+                    throw new BadRequestException("Task must have Start date");
+            }
+
             if (task != null)
             {
-                task.Title = request.Title;
-                task.Description = request.Description;
-                task.AssignBy = request.AssignBy;
-                task.Assignee = request.Assignee;
-                task.DocumentId = request.DocumentId;
+                task.Title = request.Title == null ? task.Title: request.Title;
+                task.Description = request.Description == null ? task.Description : request.Description;
+                task.AssignBy = request.AssignBy == null ? task.AssignBy : request.AssignBy;
+                task.Assignee = request.Assignee == null ? task.Assignee : request.Assignee;
+                task.DocumentId = request.DocumentId == null ? task.DocumentId : request.DocumentId;
                 _dbContext.SaveChanges();
             }
             return task;
