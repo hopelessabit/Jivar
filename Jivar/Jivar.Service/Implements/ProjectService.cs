@@ -120,15 +120,19 @@ namespace Jivar.Service.Implements
             {
                 List<int> projectIds = projects.Select(p => p.Id).ToList();
                 List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
-                List<SprintResponse> sprints =  await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
-
-                foreach (var item in result)
+                if (projectSprints.Any())
                 {
-                    List<ProjectSprint> projectSprintsForProject = projectSprints.FindAll(ps => ps.ProjectId == item.Id).ToList();
-                    if (projectSprintsForProject == null)
-                        continue;
-                    List<SprintResponse> sprintsForProject = sprints.FindAll(s => projectSprintsForProject.Select(ps => ps.ProjectId).ToList().Contains(s.Id)).ToList();
-                    item.Sprints = sprintsForProject;
+                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
+
+                    foreach (ProjectResponse item in result)
+                    {
+                        ProjectResponse a = item;
+                        List<ProjectSprint> projectSprintsForProject = projectSprints.FindAll(ps => ps.ProjectId == item.Id).ToList();
+                        if (projectSprintsForProject == null)
+                            continue;
+                        List<SprintResponse> sprintsForProject = sprints.FindAll(s => projectSprintsForProject.Select(ps => ps.SprintId).ToList().Contains(s.Id)).ToList();
+                        item.Sprints = sprintsForProject;
+                    }
                 }
             }
 
