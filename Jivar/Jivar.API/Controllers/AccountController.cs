@@ -80,7 +80,7 @@ namespace Jivar.API.Controllers
         public async Task<ActionResult> CreateNewAccount([FromForm] CreateNewAccountRequest AccountRequest)
         {
             var verificationToken = Guid.NewGuid().ToString(); // Generate a token
-            var verificationLink = $"{Request.Scheme}://{Request.Host}/api/account/verify?token={verificationToken}"; ;
+            var verificationLink = AccountRequest + verificationToken;
 
             var roleName = UserUtil.GetRoleName(HttpContext);
             var isEmailExist = await _accountSerivce.IsEmailExist(AccountRequest.Email);
