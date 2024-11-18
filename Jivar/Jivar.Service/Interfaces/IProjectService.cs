@@ -17,7 +17,7 @@ namespace Jivar.Service.Interfaces
         Task<Project> GetProjectById(int id);
 
         // Get a Project Response By ID
-        Task<ProjectResponse> GetProjectResponseById(int id);
+        Task<ProjectResponse> GetProjectResponseById(int id, bool? includeSprint = false, bool? includeRole = false, bool? includeTask = false);
 
         // Get all projects
         Task<PagedResult<ProjectResponse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false, bool? includeTask = false);

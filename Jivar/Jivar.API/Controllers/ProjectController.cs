@@ -18,11 +18,14 @@ namespace Jivar.API.Controllers
 
         // Get a project by ID
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProjectById(int id)
+        public async Task<IActionResult> GetProjectById(int id,
+            [FromQuery] bool? includeRole = null,
+            [FromQuery] bool? includeSprint = null,
+            [FromQuery] bool? includeTask = null)
         {
             try
             {
-                var project = await _projectService.GetProjectResponseById(id);
+                var project = await _projectService.GetProjectResponseById(id, includeSprint, includeRole, includeTask);
                 return Ok(project);
             }
             catch (Exception ex)

@@ -50,11 +50,39 @@ namespace Jivar.Service.Implements
             return project;
         }
 
-        public async Task<ProjectResponse> GetProjectResponseById(int id)
+        public async Task<ProjectResponse> GetProjectResponseById(int id, bool? includeSprint = false, bool? includeRole = false, bool? includeTask = false)
         {
             Project project = await GetProjectById(id);
             Account createBy = await _accountSerivce.GetAccountById(project.CreateBy);
-            return new ProjectResponse(project, createBy);
+            ProjectResponse result = new ProjectResponse(project, createBy);
+            List<int> accountIds = new List<int>();
+            accountIds.Add(createBy.Id);
+
+            if (includeRole != null && includeRole.Value)
+            {
+                List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(accountIds)).Select(a => new AccountInfoResponse(a)).ToList();
+                List<ProjectRole> roles = await _roleService.GetRolesByProjectId(result.Id);
+                accountInfos.AddRange((await _accountSerivce.GetAccountsByIds(roles.Select(r => r.AccountId).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList());
+                List<ProjectRoleResponse> roleResponses = new List<ProjectRoleResponse>();
+                roles.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.AccountId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
+
+                result.Roles = roleResponses;
+            }
+
+            if (includeSprint != null && includeSprint.Value)
+            {
+                List<int> projectIds = new List<int>()
+                    {
+                        result.Id
+                    };
+                List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
+                if (projectSprints.Any())
+                {
+                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
+                    result.Sprints = sprints;
+                }
+            }
+            return result;
         }
 
         // Get all projects
