@@ -91,6 +91,7 @@ namespace Jivar.API.Controllers
             await _sprintTaskService.AddSprintTask(sprintTask);
             var taskResponse = new CreateTaskResponse
             {
+                Id = result.Id, 
                 Title = request.Title,
                 Description = request.Description,
                 CreateBy = task.CreateBy,

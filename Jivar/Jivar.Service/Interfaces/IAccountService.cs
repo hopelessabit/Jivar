@@ -1,4 +1,6 @@
 ﻿using Jivar.BO.Models;
+using Jivar.Service.Payloads.Account.Request;
+using Jivar.Service.Payloads.Account.Response;
 using Task = System.Threading.Tasks.Task;
 
 namespace Jivar.Service.Interfaces
@@ -9,5 +11,9 @@ namespace Jivar.Service.Interfaces
         Task<bool> AddAccount(Account account);
         Task<List<Account>> GetAccountsByIds(List<int> ids);
         Task<Account> GetAccountById(int id);
+        Task<AccountInfoResponse> UpdateAccountInfo(int id, UpdateAccountRequest request);
+        Task<AccountInfoResponse> GetInfoById(int id);
+        Task<Account?> FindByToken(string token);
+        Task<AccountInfoResponse> UpdateAccount(Account account);
     }
 }

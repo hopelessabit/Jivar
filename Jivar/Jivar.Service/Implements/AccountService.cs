@@ -1,6 +1,8 @@
 ﻿using Jivar.BO.Models;
 using Jivar.Repository.Interface;
 using Jivar.Service.Interfaces;
+using Jivar.Service.Payloads.Account.Request;
+using Jivar.Service.Payloads.Account.Response;
 using Task = System.Threading.Tasks.Task;
 
 namespace Jivar.Service.Implements
@@ -52,5 +54,33 @@ namespace Jivar.Service.Implements
             return account;
         }
 
+        public async Task<AccountInfoResponse> GetInfoById(int id)
+        {
+            Account account = await GetAccountById(id);
+            return new AccountInfoResponse(account);
+        }
+
+        public async Task<AccountInfoResponse> UpdateAccountInfo(int id ,UpdateAccountRequest request)
+        {
+            Account account = await GetAccountById(id);
+            account.Name = request.Name == null ? account.Name : request.Name;
+            account.Phone = request.Phone == null ? account.Phone : request.Phone;
+            account.Birthday = request.Birthday == null ? account.Birthday : request.Birthday;
+            account.Gender = request.Gender == null ? account.Gender : request.Gender;
+
+            await _accountRepository.UpdateAsync(account);
+            return new AccountInfoResponse(account);
+        }
+
+        public async Task<AccountInfoResponse> UpdateAccount(Account account)
+        {
+            await _accountRepository.UpdateAsync(account);
+            return new AccountInfoResponse(account);
+        }
+
+        public async Task<Account?> FindByToken(string token)
+        {
+            return await _accountRepository.GetAsync(ft => ft.Verify == token);
+        }
     }
 }

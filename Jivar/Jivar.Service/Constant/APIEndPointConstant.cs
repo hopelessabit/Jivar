@@ -22,6 +22,14 @@
             public const string UpdatePassword = AuthenticationEndpoint + "/changepass";
         }
 
+        public static class Account
+        {
+            public const string AccountEndpoint = ApiEndpoint + "/account";
+            public const string UpdateInfo = AccountEndpoint + "/info";
+            public const string GetSelfInfo = AccountEndpoint + "/info";
+            public const string GetInfo = AccountEndpoint + "/info/user";
+        }
+
         public static class SprintE
         {
             public const string SprintEndpoint = ApiEndpoint + "/sprint";

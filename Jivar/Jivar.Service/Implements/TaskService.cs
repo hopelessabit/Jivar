@@ -20,7 +20,8 @@ namespace Jivar.Service.Implements
         {
             _dbContext.Tasks.Add(task);
             _dbContext.SaveChanges();
-            return task;
+            var result = _dbContext.Tasks.Where(t => t.CreateBy == task.CreateBy).OrderByDescending(t => t.Id).First();
+            return result;
         }
 
         public IEnumerable<BO.Models.Task> getTasks()
