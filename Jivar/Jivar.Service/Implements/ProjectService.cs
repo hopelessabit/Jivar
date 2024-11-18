@@ -136,6 +136,15 @@ namespace Jivar.Service.Implements
                 pageNumber: pagingParams.PageNumber,
                 pageSize: pagingParams.PageSize
             );
+            
+            if (!projects.Any())
+                return new PagedResult<ProjectResponse>
+                {
+                    TotalRecords = 0,
+                    PageNumber = pagingParams.PageNumber,
+                    PageSize = pagingParams.PageSize,
+                    Data = null
+                };
 
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
