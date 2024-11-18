@@ -2,6 +2,7 @@
 using Jivar.BO.Models;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
+using Jivar.Service.Payloads.Comment.Request;
 using Microsoft.EntityFrameworkCore;
 
 namespace Jivar.Service.Implements
@@ -21,6 +22,25 @@ namespace Jivar.Service.Implements
             if (task != null)
             {
                 _dbContext.Comments.Add(comment);
+                _dbContext.SaveChanges();
+                return comment;
+            }
+            return null;
+        }
+
+        public Comment createReplayComment(int commentId, ReplayComment request, int userId)
+        {
+            Comment comment = _dbContext.Comments.FirstOrDefault(t => t.Id == commentId);
+            if (comment != null)
+            {
+                Comment replay = new Comment();
+                replay.Content = request.content;
+                replay.ParentId = commentId;
+                replay.TaskId = request.taskId;
+                replay.CreateBy = userId;
+                replay.CreateTime = DateTime.Now;
+                replay.Status = CommentStatus.ACTIVE.ToString();
+                _dbContext.Comments.Add(replay);
                 _dbContext.SaveChanges();
                 return comment;
             }
@@ -47,6 +67,28 @@ namespace Jivar.Service.Implements
                       .ToList();
         }
 
+        public bool updateCommentById(int id)
+        {
+            Comment comment = _dbContext.Comments.FirstOrDefault(t => t.Id == id);
+            if (comment != null)
+            {
+                comment.Status = CommentStatus.INACTIVE.ToString();
+                _dbContext.SaveChanges();
+                return true;
+            }
+            return false;
+        }
 
+        public bool updateCommentById(int id, UpdateCommentRequest request)
+        {
+            Comment comment = _dbContext.Comments.FirstOrDefault(t => t.Id == id);
+            if (comment != null)
+            {
+                comment.Content = request.content;
+                _dbContext.SaveChanges();
+                return true;
+            }
+            return false;
+        }
     }
 }

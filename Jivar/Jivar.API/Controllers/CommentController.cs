@@ -70,9 +70,42 @@ namespace Jivar.API.Controllers
             bool result = _commentService.getCommentById(id);
             if (result != false)
             {
-                return StatusCode(StatusCodes.Status200OK, new ApiResponse<string>(StatusCodes.Status200OK, "Comment thành công", null));
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<string>(StatusCodes.Status200OK, "Xoá Comment thành công", null));
             }
             return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<string>(StatusCodes.Status404NotFound, "Không tìm thấy comment", null));
+        }
+
+        [HttpPut(APIEndPointConstant.CommentE.GetCommentByIdEndpoint)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public ActionResult updateCommentById(int id, [FromBody] UpdateCommentRequest request)
+        {
+            bool result = _commentService.updateCommentById(id, request);
+            if (result != false)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<string>(StatusCodes.Status200OK, "Cập nhật Comment thành công", null));
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<string>(StatusCodes.Status404NotFound, "Không tìm thấy comment", null));
+        }
+
+        [HttpPost(APIEndPointConstant.CommentE.ReplyCommentByIdEndpoint)]
+        [ProducesResponseType(typeof(Comment), StatusCodes.Status200OK)]
+        public ActionResult replyComment([Required] int commentId, [FromBody] ReplayComment request)
+        {
+            if (request == null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized);
+            }
+            var result = _commentService.createReplayComment(commentId, request, int.Parse(userId));
+            if (result != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<Comment>(StatusCodes.Status200OK, "Reply Comment thành công", result));
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<Comment>(StatusCodes.Status404NotFound, "Không tìm thấy commentId", null));
         }
     }
 }

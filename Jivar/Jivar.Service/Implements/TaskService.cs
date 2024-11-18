@@ -35,11 +35,16 @@ namespace Jivar.Service.Implements
 
         public BO.Models.Task updateStatus(int id, string status)
         {
-            BO.Models.Task task = null;
-            task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
+            BO.Models.Task task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
             if (task != null)
             {
-                if (task.Status.Equals(TaskEnum.DONE.ToString()) || task.Status.Equals(TaskEnum.TO_DO.ToString()))
+                // Ensure task.Status is not null before comparing
+                if (string.IsNullOrEmpty(task.Status))
+                {
+                    // Handle case where task.Status is null or empty (optional logic here)
+                    task.CompleteTime = null; // or any other default behavior
+                }
+                else if (task.Status.Equals(TaskEnum.DONE.ToString()) || task.Status.Equals(TaskEnum.TO_DO.ToString()))
                 {
                     task.CompleteTime = DateTime.UtcNow;
                 }
@@ -47,7 +52,11 @@ namespace Jivar.Service.Implements
                 {
                     task.CompleteTime = null;
                 }
+
+                // Update status
                 task.Status = status;
+
+                // Save changes to the database
                 _dbContext.SaveChanges();
             }
             return task;
