@@ -91,5 +91,47 @@ namespace Jivar.API.Controllers
 
             return StatusCode(StatusCodes.Status201Created, AccountResponse);
         }
+
+        [HttpPut(APIEndPointConstant.Account.UpdateInfo)]
+        public async Task<ActionResult> SeftUpdateAccount([FromForm] UpdateAccountRequest request)
+        {
+            try
+            {
+                var result = await _accountSerivce.UpdateAccountInfo(UserUtil.GetAccountId(HttpContext), request);
+                return StatusCode(StatusCodes.Status200OK, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut(APIEndPointConstant.Account.UpdateInfo + "/{id}")]
+        public async Task<ActionResult> SeftUpdateAccount(int id,[FromForm] UpdateAccountRequest request)
+        {
+            try
+            {
+                var result = await _accountSerivce.UpdateAccountInfo(UserUtil.GetAccountId(HttpContext), request);
+                return StatusCode(StatusCodes.Status200OK, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet(APIEndPointConstant.Account.GetInfo)]
+        public async Task<ActionResult> GetSeftInfo()
+        {
+            var result = await _accountSerivce.GetInfoById(UserUtil.GetAccountId(HttpContext));
+            return StatusCode(StatusCodes.Status200OK, result);
+        }
+
+        [HttpGet(APIEndPointConstant.Account.GetInfo + "/{id}")]
+        public async Task<ActionResult> GetInfo(int id)
+        {
+            var result = await _accountSerivce.GetInfoById(id);
+            return StatusCode(StatusCodes.Status200OK, result);
+        }
     }
 }

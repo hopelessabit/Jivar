@@ -101,7 +101,10 @@ internal class Program
             };
         });
         builder.Services.AddControllers()
-          .AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles; });
+          .AddJsonOptions(options => {
+              options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+              options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+          });
 
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
