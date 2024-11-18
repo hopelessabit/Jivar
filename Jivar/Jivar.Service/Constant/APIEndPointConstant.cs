@@ -50,5 +50,11 @@
             public const string UploadFile = DocumentEndpoint + "/uploadFile";
             public const string GetDocumentById = DocumentEndpoint + "/{id}";
         }
+
+        public static class CommentE
+        {
+            public const string CommentEndpoint = ApiEndpoint + "/comment";
+            public const string CreateCommentEndpoint = CommentEndpoint + "/{taskId}";
+        }
     }
 }

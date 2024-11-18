@@ -39,6 +39,10 @@ namespace Jivar.API.Controllers
                 return ValidationProblem(ModelState);
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
             if (request == null || sprintId == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
@@ -59,12 +63,14 @@ namespace Jivar.API.Controllers
             try
             {
                 result = _taskService.CreateTask(task);
-            } catch (BadRequestException ex)
+            }
+            catch (BadRequestException ex)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, ex.Message);
             }
 
-            if (request.DocumentId.HasValue){
+            if (request.DocumentId.HasValue)
+            {
                 var documentTask = new TaskDocument(task.Id, request.DocumentId.Value);
                 _taskDocumentService.createTaskDocument(documentTask);
             }
