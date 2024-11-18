@@ -105,6 +105,10 @@ public partial class JivarDbContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .HasColumnName("username");
+            entity.Property(e => e.Verify)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("verify");
         });
 
         modelBuilder.Entity<AccountToken>(entity =>

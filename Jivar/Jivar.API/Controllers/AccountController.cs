@@ -1,10 +1,12 @@
 ﻿using Jivar.BO.Models;
 using Jivar.Service.Constant;
+using Jivar.Service.Implements;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Account.Request;
 using Jivar.Service.Payloads.Account.Response;
 using Jivar.Service.PayLoads;
 using Jivar.Service.Util;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jivar.API.Controllers
@@ -15,21 +17,42 @@ namespace Jivar.API.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IAccountService _accountSerivce;
+        private readonly EmailService _emailService;
 
-        public AccountController(IAuthService authService, IAccountService accountSerivce)
+        public AccountController(IAuthService authService, IAccountService accountSerivce, EmailService emailService)
         {
             _authService = authService;
             _accountSerivce = accountSerivce;
+            _emailService = emailService;
+        }
+
+        [HttpPost("create-account")]
+        public async Task<IActionResult> CreateAccount()
+        {
+            // Simulate user creation logic here
+            var verificationToken = Guid.NewGuid().ToString(); // Generate a token
+            var verificationLink = $"{Request.Scheme}://{Request.Host}/api/account/verify?token={verificationToken}"; ;
+
+            // Send verification email
+            await _emailService.SendVerificationEmailAsync("micalminh1@gmail.com", verificationLink);
+
+            return Ok(new { message = "Account created successfully. Please verify your email." });
         }
 
 
         [HttpPost(APIEndPointConstant.Authentication.Login)]
         [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesErrorResponseType(typeof(UnauthorizedObjectResult))]
-
         public async Task<ActionResult<string>> Login([FromForm] LoginRequest request)
         {
             var (account, actorId) = await _authService.Authenticate(request.Email, request.Password);
+            if (account.Verify != null)
+                return Unauthorized(new Jivar.Service.PayLoads.ErrorResponse()
+                {
+                    StatusCode = StatusCodes.Status401Unauthorized,
+                    Error = "You must verify your email to continute.",
+                    TimeStamp = DateTime.Now
+                });
             if (account == null)
             {
                 return Unauthorized(new Jivar.Service.PayLoads.ErrorResponse()
@@ -51,13 +74,14 @@ namespace Jivar.API.Controllers
             return Ok(loginResponse);
         }
 
-
-
         [HttpPost(APIEndPointConstant.Authentication.CreateAccount)]
         [ProducesResponseType(typeof(CreateNewAccountResponse), StatusCodes.Status201Created)]
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<ActionResult> CreateNewAccount([FromForm] CreateNewAccountRequest AccountRequest)
         {
+            var verificationToken = Guid.NewGuid().ToString(); // Generate a token
+            var verificationLink = $"{Request.Scheme}://{Request.Host}/api/account/verify?token={verificationToken}"; ;
+
             var roleName = UserUtil.GetRoleName(HttpContext);
             var isEmailExist = await _accountSerivce.IsEmailExist(AccountRequest.Email);
             if (isEmailExist)
@@ -76,8 +100,13 @@ namespace Jivar.API.Controllers
                 Gender = AccountRequest.Gender,
                 Phone = AccountRequest.Phone,
                 Birthday = AccountRequest.Birthday,
+                Verify = verificationToken,
                 CreateTime = DateTime.Now,
             };
+
+            // Send verification email
+            await _emailService.SendVerificationEmailAsync("micalminh1@gmail.com", verificationLink);
+
             var check = await _accountSerivce.AddAccount(account);
 
             var AccountResponse = new CreateNewAccountResponse
@@ -89,7 +118,25 @@ namespace Jivar.API.Controllers
                 Phone = account.Phone
             };
 
-            return StatusCode(StatusCodes.Status201Created, AccountResponse);
+            return Ok(new { message = "Account created successfully. Please verify your email." });
+        }
+
+        [HttpGet("verify")]
+        public async Task<IActionResult> VerifyAccount([FromQuery] string token)
+        {
+            Account? account = await _accountSerivce.FindByToken(token);
+            if (account == null)
+            {
+                return NotFound(new Jivar.Service.PayLoads.ErrorResponse()
+                {
+                    StatusCode = StatusCodes.Status404NotFound,
+                    Error = "Account not found.",
+                    TimeStamp = DateTime.Now
+                });
+            }
+            account.Verify = null;
+            await _accountSerivce.UpdateAccount(account);
+            return Ok(new { message = "Account verified successfully." });
         }
 
         [HttpPut(APIEndPointConstant.Account.UpdateInfo)]

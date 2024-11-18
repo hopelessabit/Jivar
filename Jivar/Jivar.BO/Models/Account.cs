@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System;
 using System.Collections.Generic;
 
 namespace Jivar.BO.Models;
@@ -24,6 +25,8 @@ public partial class Account
     public string Role { get; set; }
 
     public string Name { get; set; }
+
+    public string? Verify {  get; set; }
 
     public virtual ICollection<AccountToken> AccountTokens { get; set; } = new List<AccountToken>();
 

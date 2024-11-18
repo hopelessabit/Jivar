@@ -107,7 +107,7 @@ internal class Program
           });
 
         builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+        builder.Services.AddSingleton<EmailService>();
         builder.Services.AddScoped<JivarDbContext, JivarDbContext>();
 
         //Add DAOs

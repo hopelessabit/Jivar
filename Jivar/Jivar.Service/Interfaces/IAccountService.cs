@@ -13,5 +13,7 @@ namespace Jivar.Service.Interfaces
         Task<Account> GetAccountById(int id);
         Task<AccountInfoResponse> UpdateAccountInfo(int id, UpdateAccountRequest request);
         Task<AccountInfoResponse> GetInfoById(int id);
+        Task<Account?> FindByToken(string token);
+        Task<AccountInfoResponse> UpdateAccount(Account account);
     }
 }

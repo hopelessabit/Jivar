@@ -71,5 +71,16 @@ namespace Jivar.Service.Implements
             await _accountRepository.UpdateAsync(account);
             return new AccountInfoResponse(account);
         }
+
+        public async Task<AccountInfoResponse> UpdateAccount(Account account)
+        {
+            await _accountRepository.UpdateAsync(account);
+            return new AccountInfoResponse(account);
+        }
+
+        public async Task<Account?> FindByToken(string token)
+        {
+            return await _accountRepository.GetAsync(ft => ft.Verify == token);
+        }
     }
 }

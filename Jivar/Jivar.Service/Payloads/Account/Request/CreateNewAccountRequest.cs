@@ -23,5 +23,6 @@ namespace Jivar.Service.Payloads.Account.Request
         public DateTime? Birthday { get; set; }
 
         public string Gender { get; set; }
+        public string? FeUrl { get; set; }
     }
 }
