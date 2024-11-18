@@ -120,6 +120,7 @@ internal class Program
         builder.Services.AddScoped<IBacklogRepository, BacklogRepository>();
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
+        builder.Services.AddScoped<IProjectSprintRepository, ProjectSprintRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();
@@ -134,6 +135,7 @@ internal class Program
         builder.Services.AddScoped<IProjectRoleService, ProjectRoleService>();
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<ITaskDocumentService, TaskDocumentService>();
+        builder.Services.AddScoped<IProjectSprintService, ProjectSprintService>();
 
 
         // Add services to the container.

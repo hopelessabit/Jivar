@@ -13,7 +13,19 @@ public partial class ProjectSprint
 
     public DateTime? EndDate { get; set; }
 
-    public virtual Project Project { get; set; }
+    public virtual Project? Project { get; set; }
 
-    public virtual Sprint Sprint { get; set; }
+    public virtual Sprint? Sprint { get; set; }
+
+    public ProjectSprint(Sprint sprint)
+    {
+        ProjectId = sprint.ProjectId;
+        SprintId = sprint.Id;
+        StartDate = sprint.StartDate;
+        EndDate = sprint.EndDate;
+    }
+
+    public ProjectSprint()
+    {
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using Jivar.Service.Util;
 using System.ComponentModel.DataAnnotations;
 
-namespace Jivar.Service.Payloads.Task.Request
+namespace Jivar.Service.Payloads.Tasks.Request
 {
     public class CreateTaskRequest
     {

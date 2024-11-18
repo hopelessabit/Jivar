@@ -2,6 +2,7 @@
 using ModelProject = Jivar.BO.Models.Project;
 using AccountModel = Jivar.BO.Models.Account;
 using Jivar.Service.Payloads.ProjectRole.Response;
+using Jivar.Service.Payloads.Sprint.Response;
 
 namespace Jivar.Service.Payloads.Project.Response
 {
@@ -24,6 +25,7 @@ namespace Jivar.Service.Payloads.Project.Response
 
         public string Status { get; set; }
         public List<ProjectRoleResponse> Roles { get; set; }
+        public List<SprintResponse> Sprints { get; set; }
 
         public ProjectResponse(ModelProject project, AccountModel createBy)
         {

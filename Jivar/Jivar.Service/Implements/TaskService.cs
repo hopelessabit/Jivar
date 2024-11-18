@@ -1,7 +1,7 @@
 ﻿using Jivar.BO;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
-using Jivar.Service.Payloads.Task.Request;
+using Jivar.Service.Payloads.Tasks.Request;
 
 namespace Jivar.Service.Implements
 {

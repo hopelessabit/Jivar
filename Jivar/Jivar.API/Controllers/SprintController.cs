@@ -12,12 +12,14 @@ namespace Jivar.API.Controllers
     public class SprintController : ControllerBase
     {
         private readonly ISprintService _sprintService;
+        private readonly IProjectSprintService _projectSprintService;
         private readonly ISprintTaskService _sprintTaskService;
 
-        public SprintController(ISprintService sprintService, ISprintTaskService sprintTaskService)
+        public SprintController(ISprintService sprintService, ISprintTaskService sprintTaskService, IProjectSprintService projectSprintService)
         {
             _sprintService = sprintService;
             _sprintTaskService = sprintTaskService;
+            _projectSprintService = projectSprintService;
         }
 
         [HttpPost(APIEndPointConstant.SprintE.SprintEndpoint)]
@@ -37,10 +39,18 @@ namespace Jivar.API.Controllers
             };
             var result = await _sprintService.createSprint(sprint);
 
+            Sprint resultSprint = await _sprintService.GetLatestSprint(projectId, true);
+
+            ProjectSprint projectSprint = new ProjectSprint(resultSprint);
+
+            if (await _projectSprintService.AddProjectSprintAsync(projectSprint) == false)
+            {
+                throw new Exception($"Add Project Sprint Failed.");
+            }
+
             var SprintResponse = new CreateSprintResponse
             {
-                Id = sprint.Id,
-                ProjectId = sprint.ProjectId,
+                Id = resultSprint.Id,
                 Name = sprint.Name,
                 StartDate = sprint.StartDate,
                 EndDate = sprint.EndDate,
@@ -59,7 +69,6 @@ namespace Jivar.API.Controllers
             var sprintResponses = result.Select(sprint => new CreateSprintResponse
             {
                 Id = sprint.Id,
-                ProjectId = sprint.ProjectId,
                 Name = sprint.Name,
                 StartDate = sprint.StartDate,
                 EndDate = sprint.EndDate,
@@ -106,7 +115,6 @@ namespace Jivar.API.Controllers
             var sprintResponse = new CreateSprintResponse
             {
                 Id = result.Id,
-                ProjectId = result.ProjectId,
                 Name = result.Name,
                 StartDate = result.StartDate,
                 EndDate = result.EndDate,
@@ -134,7 +142,6 @@ namespace Jivar.API.Controllers
             var sprintResponse = new CreateSprintResponse
             {
                 Id = result.Id,
-                ProjectId = result.ProjectId,
                 Name = result.Name,
                 StartDate = result.StartDate,
                 EndDate = result.EndDate,

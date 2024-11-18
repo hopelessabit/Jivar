@@ -2,7 +2,7 @@
 
 
 
-using Jivar.Service.Payloads.Task.Request;
+using Jivar.Service.Payloads.Tasks.Request;
 
 namespace Jivar.Service.Interfaces
 {

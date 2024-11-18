@@ -9,6 +9,7 @@ using Jivar.Service.Payloads.Account.Response;
 using Jivar.Service.Payloads.Project.Request;
 using Jivar.Service.Payloads.Project.Response;
 using Jivar.Service.Payloads.ProjectRole.Response;
+using Jivar.Service.Payloads.Sprint.Response;
 using Jivar.Service.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -24,14 +25,20 @@ namespace Jivar.Service.Implements
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectRoleService _roleService;
         private readonly IAccountService _accountSerivce;
+        private readonly IProjectSprintService _projectSprintService;
+        private readonly ISprintService _sprintService;
 
         public ProjectService(IProjectRepository projectRepository,
             IProjectRoleService roleService,
-            IAccountService accountService)
+            IAccountService accountService,
+            IProjectSprintService projectSprintService,
+            ISprintService sprintService)
         {
             _projectRepository = projectRepository;
             _roleService = roleService; 
             _accountSerivce = accountService;
+            _projectSprintService = projectSprintService;
+            _sprintService = sprintService;
         }
 
         // Get a project by ID
@@ -56,7 +63,12 @@ namespace Jivar.Service.Implements
             return (await _projectRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<PagedResult<ProjectResponse>> GetProjects(PagingAndSortingParams pagingParams, string? searchTerm = null, bool? includeSprint = false, bool? includeRole = false)
+        public async Task<PagedResult<ProjectResponse>> GetProjects(
+            PagingAndSortingParams pagingParams,
+            string? searchTerm = null,
+            bool? includeSprint = false,
+            bool? includeRole = false,
+            bool? includeTask = false)
         {
             // Define the filter for searching by name
             Expression<Func<Project, bool>>? filter = null;
@@ -95,12 +107,29 @@ namespace Jivar.Service.Implements
 
                 foreach (var item in result)
                 {
-                    List<ProjectRole> rolesForProject= roles.FindAll(r => r.ProjectId == item.Id).ToList();
+                    List<ProjectRole> rolesForProject = roles.FindAll(r => r.ProjectId == item.Id).ToList();
+                    if (rolesForProject == null) continue;
                     List<ProjectRoleResponse> roleResponses = new List<ProjectRoleResponse>();
                     rolesForProject.ForEach(r => roleResponses.Add(new ProjectRoleResponse(accountInfos.Find(a => a.Id == r.AccountId).ThrowIfNull($"Account with Id: {r.AccountId} not found"), r)));
                     item.Roles = roleResponses.FindAll(rr => roles.FindAll(r => r.ProjectId == item.Id).ToList().Select(r => r.AccountId).Contains(rr.AccountId));
                 }
 
+            }
+
+            if (includeSprint != null && includeSprint.Value)
+            {
+                List<int> projectIds = projects.Select(p => p.Id).ToList();
+                List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
+                List<SprintResponse> sprints =  await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
+
+                foreach (var item in result)
+                {
+                    List<ProjectSprint> projectSprintsForProject = projectSprints.FindAll(ps => ps.ProjectId == item.Id).ToList();
+                    if (projectSprintsForProject == null)
+                        continue;
+                    List<SprintResponse> sprintsForProject = sprints.FindAll(s => projectSprintsForProject.Select(ps => ps.ProjectId).ToList().Contains(s.Id)).ToList();
+                    item.Sprints = sprintsForProject;
+                }
             }
 
             // Calculate the total record count

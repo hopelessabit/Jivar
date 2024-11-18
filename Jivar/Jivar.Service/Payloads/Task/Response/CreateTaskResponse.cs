@@ -1,4 +1,4 @@
-﻿namespace Jivar.Service.Payloads.Task.Response
+﻿namespace Jivar.Service.Payloads.Tasks.Response
 {
     public class CreateTaskResponse
     {

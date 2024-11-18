@@ -2,8 +2,8 @@
 using Jivar.Service.Constant;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
-using Jivar.Service.Payloads.Task.Request;
-using Jivar.Service.Payloads.Task.Response;
+using Jivar.Service.Payloads.Tasks.Request;
+using Jivar.Service.Payloads.Tasks.Response;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
