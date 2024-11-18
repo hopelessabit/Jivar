@@ -173,7 +173,7 @@ public partial class JivarDbContext : DbContext
                 .HasColumnName("status");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
 
-            entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
+            entity.HasOne(d => d.Parent).WithMany(p => p.Replies)
                 .HasForeignKey(d => d.ParentId)
                 .HasConstraintName("FK__comment__parent___5629CD9C");
 
@@ -258,7 +258,7 @@ public partial class JivarDbContext : DbContext
                 .HasMaxLength(20)
                 .HasConversion(new ValueConverter<ProjectRoleType, string>(
                     v => v.ToString(),
-                    v => Enum.Parse<ProjectRoleType>(v, true) 
+                    v => Enum.Parse<ProjectRoleType>(v, true)
                 ))
                 .IsUnicode(false)
                 .HasColumnName("role");
@@ -341,6 +341,8 @@ public partial class JivarDbContext : DbContext
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__sprint_ta__task___59FA5E80");
+
+            entity.Property(e => e.Status).HasColumnName("status");
         });
 
         modelBuilder.Entity<SubTask>(entity =>

@@ -20,7 +20,7 @@ namespace Jivar.API.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost(APIEndPointConstant.CommentE.CreateCommentEndpoint)]
+        [HttpPost(APIEndPointConstant.CommentE.GetCommentEndpoint)]
         [ProducesResponseType(typeof(Comment), StatusCodes.Status200OK)]
         public ActionResult createComment([Required] int taskId, [FromBody] CreateComment request)
         {
@@ -48,6 +48,31 @@ namespace Jivar.API.Controllers
                 return StatusCode(StatusCodes.Status200OK, new ApiResponse<Comment>(StatusCodes.Status200OK, "Comment thành công", result));
             }
             return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<Comment>(StatusCodes.Status404NotFound, "Không tìm thấy taskId", null));
+        }
+
+        [HttpGet(APIEndPointConstant.CommentE.GetCommentEndpoint)]
+        [ProducesResponseType(typeof(IEnumerable<Comment>), StatusCodes.Status200OK)]
+        public ActionResult getCommentByTaskId([Required] int taskId)
+        {
+            var result = _commentService.getCommentByTaskId(taskId);
+            if (result != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<IEnumerable<Comment>>(StatusCodes.Status200OK, "Comment thành công", result));
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<IEnumerable<Comment>>(StatusCodes.Status404NotFound, "Không tìm thấy comment by taskId", null));
+        }
+
+
+        [HttpDelete(APIEndPointConstant.CommentE.GetCommentByIdEndpoint)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public ActionResult getCommentById([Required] int id)
+        {
+            bool result = _commentService.getCommentById(id);
+            if (result != false)
+            {
+                return StatusCode(StatusCodes.Status200OK, new ApiResponse<string>(StatusCodes.Status200OK, "Comment thành công", null));
+            }
+            return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<string>(StatusCodes.Status404NotFound, "Không tìm thấy comment", null));
         }
     }
 }

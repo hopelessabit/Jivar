@@ -6,10 +6,10 @@ namespace Jivar.Service.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TaskEnum
     {
-        [Display(Name = "Complete", Description = "Task đã hoàn thành")]
-        COMPLETE,
-        [Display(Name = "Not Complete", Description = "Task chưa hoàn thành")]
-        NOT_COMPLETE,
+        [Display(Name = "Done", Description = "Task đã hoàn thành")]
+        DONE,
+        [Display(Name = "To Do", Description = "Task cần làm")]
+        TO_DO,
         [Display(Name = "In progress", Description = "Task đang thực hiện")]
         IN_PROGRESS,
     }

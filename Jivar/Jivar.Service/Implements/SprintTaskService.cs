@@ -1,5 +1,6 @@
 ﻿using Jivar.BO.Models;
 using Jivar.Repository.Interface;
+using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
 
 namespace Jivar.Service.Implements
@@ -31,6 +32,18 @@ namespace Jivar.Service.Implements
             sprintTask.StartDate.Equals(endDateSprintTask);
             return await _sprintTaskRepository.UpdateAsync(sprintTask);
 
+        }
+
+        public async Task<bool> deleteSprintTaskV2(int? id)
+        {
+            var resultSprintTask = _sprintTaskRepository.Get(sp => sp.SprintId == id);
+            if (resultSprintTask != null)
+            {
+                resultSprintTask.Status = SprintTaskEnum.INACTIVE.ToString();
+                await _sprintTaskRepository.UpdateAsync(resultSprintTask);
+                return true;
+            }
+            return false;
         }
     }
 }

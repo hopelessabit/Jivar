@@ -20,20 +20,27 @@ namespace Jivar.API.Controllers
         private readonly IHttpContextAccessor _context;
         private readonly IDocumentService _documentService;
         private readonly ITaskDocumentService _taskDocumentService;
+        private readonly ISprintService _sprintService;
 
-        public TaskController(ISprintTaskService sprintTaskService, IHttpContextAccessor context, ITaskService taskService, IDocumentService documentService, ITaskDocumentService taskDocumentService)
+        public TaskController(ISprintTaskService sprintTaskService, IHttpContextAccessor context, ITaskService taskService, IDocumentService documentService, ITaskDocumentService taskDocumentService, ISprintService sprintService)
         {
             _sprintTaskService = sprintTaskService;
             _context = context;
             _taskService = taskService;
             _documentService = documentService;
             _taskDocumentService = taskDocumentService;
+            _sprintService = sprintService;
         }
 
         [HttpPost(APIEndPointConstant.TaskE.TaskEndpoint)]
         [ProducesResponseType(typeof(CreateTaskResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateNewTask(int sprintId, [FromBody] CreateTaskRequest request)
         {
+            var checkSprintExisted = await _sprintService.getSprintById(sprintId);
+            if (checkSprintExisted == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<CreateTaskResponse>(StatusCodes.Status404NotFound, "Không tìm thấy sprintId", null));
+            }
             if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
@@ -47,7 +54,6 @@ namespace Jivar.API.Controllers
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
-
             var task = new BO.Models.Task()
             {
                 Title = request.Title,
@@ -57,7 +63,7 @@ namespace Jivar.API.Controllers
                 AssignBy = request.AssignBy,
                 Assignee = request.Assignee,
                 DocumentId = request.DocumentId,
-                Status = TaskEnum.IN_PROGRESS.ToString(),
+                Status = null,
             };
             BO.Models.Task result;
             try
@@ -80,6 +86,7 @@ namespace Jivar.API.Controllers
                 TaskId = result.Id,
                 StartDate = request.startDateSprintTask,
                 EndDate = request.endDateSprintTask,
+                Status = SprintTaskEnum.ACTIVE.ToString(),
             };
             await _sprintTaskService.AddSprintTask(sprintTask);
             var taskResponse = new CreateTaskResponse
@@ -118,7 +125,7 @@ namespace Jivar.API.Controllers
             return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Lấy task thành công", taskResponse));
         }
 
-        [HttpDelete(APIEndPointConstant.TaskE.UpdateStatusTask)]
+        [HttpPut(APIEndPointConstant.TaskE.UpdateStatusTask)]
         [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
         public async Task<ActionResult> getTasksById(int id, [Required] TaskEnum status)
         {
@@ -141,6 +148,18 @@ namespace Jivar.API.Controllers
             }
             await _sprintTaskService.updateSprintTask(id, request.startDateSprintTask, request.endDateSprintTask);
             return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Cập nhật thông tin task thành công", task));
+        }
+
+        [HttpDelete(APIEndPointConstant.TaskE.GetTaskById)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult> deleteTask([Required] int id)
+        {
+            bool sprintTask = await _sprintTaskService.deleteSprintTaskV2(id);
+            if (sprintTask == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<string>(StatusCodes.Status404NotFound, "Task không tồn tại", null));
+            }
+            return StatusCode(StatusCodes.Status200OK, new ApiResponse<string>(StatusCodes.Status200OK, "Xoá thông tin task thành công", null));
         }
     }
 }

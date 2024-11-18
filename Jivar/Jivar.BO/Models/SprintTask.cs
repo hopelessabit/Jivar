@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class SprintTask
 {
@@ -12,6 +9,7 @@ public partial class SprintTask
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+    public string? Status { get; set; }
 
     public virtual Sprint Sprint { get; set; }
 
