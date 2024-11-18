@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class Comment
 {
@@ -19,7 +16,7 @@ public partial class Comment
 
     public string Status { get; set; }
 
-    public virtual ICollection<Comment> InverseParent { get; set; } = new List<Comment>();
+    public virtual ICollection<Comment> Replies { get; set; } = new List<Comment>();
 
     public virtual Comment Parent { get; set; }
 

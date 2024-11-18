@@ -39,7 +39,7 @@ namespace Jivar.Service.Implements
             task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
             if (task != null)
             {
-                if (task.Status.Equals(TaskEnum.COMPLETE.ToString()) || task.Status.Equals(TaskEnum.NOT_COMPLETE.ToString()))
+                if (task.Status.Equals(TaskEnum.DONE.ToString()) || task.Status.Equals(TaskEnum.TO_DO.ToString()))
                 {
                     task.CompleteTime = DateTime.UtcNow;
                 }
@@ -58,13 +58,14 @@ namespace Jivar.Service.Implements
             BO.Models.Task task = null;
             task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
             SprintTask sprintTask = _dbContext.SprintTasks.FirstOrDefault(st => st.TaskId == task.Id);
-            if (sprintTask != null) 
+            if (sprintTask != null)
             {
                 if (request.endDateSprintTask != null && sprintTask.StartDate == null && request.startDateSprintTask == null)
                     throw new BadRequestException("Task must have Start date");
                 else if (request.endDateSprintTask != null && sprintTask.StartDate != null && sprintTask.StartDate > request.endDateSprintTask)
                     throw new Exception("Start date must smaller than End date");
-            } else
+            }
+            else
             {
                 if (request.endDateSprintTask != null && request.startDateSprintTask == null)
                     throw new BadRequestException("Task must have Start date");
@@ -72,7 +73,7 @@ namespace Jivar.Service.Implements
 
             if (task != null)
             {
-                task.Title = request.Title == null ? task.Title: request.Title;
+                task.Title = request.Title == null ? task.Title : request.Title;
                 task.Description = request.Description == null ? task.Description : request.Description;
                 task.AssignBy = request.AssignBy == null ? task.AssignBy : request.AssignBy;
                 task.Assignee = request.Assignee == null ? task.Assignee : request.Assignee;

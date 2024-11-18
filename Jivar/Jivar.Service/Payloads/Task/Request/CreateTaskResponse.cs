@@ -19,7 +19,5 @@ namespace Jivar.Service.Payloads.Tasks.Request
         public DateTime? startDateSprintTask { get; set; }
 
         public DateTime? endDateSprintTask { get; set; }
-
-        public string? titleColumn { get; set; }
     }
 }
