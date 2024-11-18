@@ -66,5 +66,12 @@
             public const string GetCommentByIdEndpoint = CommentEndpoint + "/{id}";
             public const string ReplyCommentByIdEndpoint = CommentEndpoint + "/reply/{commentId}";
         }
+
+        public static class NotificationE
+        {
+            public const string NotificationEndpoint = ApiEndpoint + "/notification";
+            public const string GetNotificationEndpoint = NotificationEndpoint + "/{accountId}";
+
+        }
     }
 }
