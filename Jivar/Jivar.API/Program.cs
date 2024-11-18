@@ -137,6 +137,7 @@ internal class Program
         builder.Services.AddScoped<ITaskDocumentService, TaskDocumentService>();
         builder.Services.AddScoped<IProjectSprintService, ProjectSprintService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
+        builder.Services.AddScoped<INotificationService, NotificationService>();
 
 
         // Add services to the container.
