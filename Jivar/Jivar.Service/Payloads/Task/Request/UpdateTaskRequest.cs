@@ -1,5 +1,4 @@
-﻿using Jivar.Service.Util;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Jivar.Service.Payloads.Tasks.Request
 {
@@ -15,7 +14,7 @@ namespace Jivar.Service.Payloads.Tasks.Request
 
         public int? DocumentId { get; set; }
 
-        [CompareDate("endDateSprintTask", ErrorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc")]
+        //[CompareDate("endDateSprintTask", ErrorMessage = "Ngày bắt đầu phải nhỏ hơn ngày kết thúc")]
         public DateTime? startDateSprintTask { get; set; }
 
         public DateTime? endDateSprintTask { get; set; }
