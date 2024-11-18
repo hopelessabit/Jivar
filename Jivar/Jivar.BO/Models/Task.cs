@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Jivar.BO.Models;
+﻿namespace Jivar.BO.Models;
 
 public partial class Task
 {
@@ -23,7 +20,7 @@ public partial class Task
 
     public int? DocumentId { get; set; }
 
-    public string Status { get; set; }
+    public string? Status { get; set; }
 
     public virtual ICollection<Backlog> Backlogs { get; set; } = new List<Backlog>();
 
