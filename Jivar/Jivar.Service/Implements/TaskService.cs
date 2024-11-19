@@ -125,6 +125,7 @@ namespace Jivar.Service.Implements
                 task.Description = request.Description == null ? task.Description : request.Description;
                 task.AssignBy = request.AssignBy == null ? task.AssignBy : request.AssignBy;
                 task.Assignee = request.Assignee == null ? task.Assignee : request.Assignee;
+                task.SprintTask = sprintTask;
                 task.DocumentId = request.DocumentId == null ? task.DocumentId : request.DocumentId;
                 _dbContext.Update(task);
                 await _dbContext.SaveChangesAsync();
