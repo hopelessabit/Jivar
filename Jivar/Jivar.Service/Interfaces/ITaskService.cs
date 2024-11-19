@@ -15,7 +15,7 @@ namespace Jivar.Service.Interfaces
         IEnumerable<BO.Models.Task> getTasks();
         TaskResponse getTasksById(int taskId);
         BO.Models.Task updateStatus(int id, string status);
-        BO.Models.Task updateTask(int id, UpdateTaskRequest request);
+        Task<BO.Models.Task> updateTask(int id, UpdateTaskRequest request);
         Task<TaskResponse> GetTasksById(int taskId, int projectId, HttpContext context);
     }
 }

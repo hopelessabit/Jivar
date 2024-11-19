@@ -154,7 +154,7 @@ namespace Jivar.API.Controllers
         [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
         public async Task<ActionResult> updateTask([Required] int id, [FromBody] UpdateTaskRequest request)
         {
-            BO.Models.Task task = _taskService.updateTask(id, request);
+            BO.Models.Task task = await _taskService.updateTask(id, request);
             if (task == null)
             {
                 return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));

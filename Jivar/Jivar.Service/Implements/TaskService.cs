@@ -10,6 +10,7 @@ using Jivar.Service.Payloads.Tasks.Response;
 using Jivar.Service.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Sorting;
 
 namespace Jivar.Service.Implements
 {
@@ -41,7 +42,7 @@ namespace Jivar.Service.Implements
 
         public TaskResponse getTasksById(int taskId)
         {
-            BO.Models.Task task = _dbContext.Tasks.Include(c => c.SprintTask).FirstOrDefault(task => task.Id.Equals(taskId));
+            BO.Models.Task task = _dbContext.Tasks.Include(c => c.SprintTask).FirstOrDefault(task => task.Id.Equals(taskId) && task.SprintTask.Status == "Active");
             if (task.Assignee == null)
             {
                 return new TaskResponse(task);
@@ -91,16 +92,17 @@ namespace Jivar.Service.Implements
                 task.Status = status;
 
                 // Save changes to the database
+                _dbContext.Update(task);
                 _dbContext.SaveChanges();
             }
             return task;
         }
 
-        public BO.Models.Task updateTask(int id, UpdateTaskRequest request)
+        public async Task<BO.Models.Task> updateTask(int id, UpdateTaskRequest request)
         {
             BO.Models.Task task = null;
-            task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(id));
-            SprintTask sprintTask = _dbContext.SprintTasks.FirstOrDefault(st => st.TaskId == task.Id);
+            task = await _dbContext.Tasks.FirstOrDefaultAsync(task => task.Id.Equals(id));
+            SprintTask sprintTask = await _dbContext.SprintTasks.FirstOrDefaultAsync(st => st.TaskId == task.Id);
             if (sprintTask != null)
             {
                 if (request.endDateSprintTask != null && sprintTask.StartDate == null && request.startDateSprintTask == null)
@@ -116,6 +118,7 @@ namespace Jivar.Service.Implements
             sprintTask.StartDate = request.startDateSprintTask;
             sprintTask.EndDate = request.endDateSprintTask;
             _dbContext.Update(sprintTask);
+            await _dbContext.SaveChangesAsync();
             if (task != null)
             {
                 task.Title = request.Title == null ? task.Title : request.Title;
@@ -124,7 +127,7 @@ namespace Jivar.Service.Implements
                 task.Assignee = request.Assignee == null ? task.Assignee : request.Assignee;
                 task.DocumentId = request.DocumentId == null ? task.DocumentId : request.DocumentId;
                 _dbContext.Update(task);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
             }
             return task;
         }

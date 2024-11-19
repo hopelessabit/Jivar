@@ -25,8 +25,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
         public string? AssigneeName {  get; set; }
 
         public DateTime? CompleteTime { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime? StartDateSprintTask { get; set; }
+        public DateTime? EndDateSprintTask { get; set; }
 
         public int? DocumentId { get; set; }
 
@@ -44,8 +44,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
             AssignBy = task.AssignBy;
             Assignee = task.Assignee;
             CompleteTime = task.CompleteTime;
-            StartDate = task.SprintTask != null ? task.SprintTask.StartDate : null;
-            EndDate = task.SprintTask != null ? task.SprintTask.EndDate : null;
+            StartDateSprintTask = task.SprintTask != null ? task.SprintTask.StartDate : null;
+            EndDateSprintTask = task.SprintTask != null ? task.SprintTask.EndDate : null;
             DocumentId = task.DocumentId;
             Status = task.Status;
         }
@@ -59,8 +59,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
             AssignBy = task.AssignBy;
             Assignee = task.Assignee;
             CompleteTime = task.CompleteTime;
-            StartDate = task.SprintTask != null ? task.SprintTask.StartDate : null;
-            EndDate = task.SprintTask != null ? task.SprintTask.EndDate : null;
+            StartDateSprintTask = task.SprintTask != null ? task.SprintTask.StartDate : null;
+            EndDateSprintTask = task.SprintTask != null ? task.SprintTask.EndDate : null;
             DocumentId = task.DocumentId;
             Status = task.Status;
             AssigneeName = account.Name;
@@ -75,8 +75,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
             AssignBy = task.AssignBy;
             Assignee = task.Assignee;
             CompleteTime = task.CompleteTime;
-            StartDate = task.SprintTask != null ? task.SprintTask.StartDate : null;
-            EndDate = task.SprintTask != null ? task.SprintTask.EndDate : null;
+            StartDateSprintTask = task.SprintTask != null ? task.SprintTask.StartDate : null;
+            EndDateSprintTask = task.SprintTask != null ? task.SprintTask.EndDate : null;
             CompleteTime = task.CompleteTime;
             DocumentId = task.DocumentId;
             Status = task.Status;
