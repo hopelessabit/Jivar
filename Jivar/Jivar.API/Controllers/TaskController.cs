@@ -168,7 +168,7 @@ namespace Jivar.API.Controllers
         public async Task<ActionResult> deleteTask([Required] int id)
         {
             bool sprintTask = await _sprintTaskService.deleteSprintTaskV2(id);
-            if (sprintTask == null)
+            if (sprintTask == false)
             {
                 return StatusCode(StatusCodes.Status404NotFound, new ApiResponse<string>(StatusCodes.Status404NotFound, "Task không tồn tại", null));
             }

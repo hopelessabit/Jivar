@@ -65,7 +65,7 @@ namespace Jivar.Service.Implements
             List<SprintResponse> sprints = (await _sprintRepository.GetAllAsync(s => projectIds.Contains(s.ProjectId))).Select(s => new SprintResponse(s)).ToList();
             if (includeTask.Value)
             {
-                List<SprintTask> sprintTasks = (await _sprintTaskRepository.GetAllAsync(st => sprints.Select(s => s.Id).ToList().Contains(st.SprintId))).ToList();
+                List<SprintTask> sprintTasks = (await _sprintTaskRepository.GetAllAsync(st => st.Status == "Active" && sprints.Select(s => s.Id).ToList().Contains(st.SprintId))).ToList();
                 if (!sprintTasks.Any())
                     return sprints;
                 List<TaskResponse> taskResponses = (await _taskRepository.GetAllAsync(st => sprintTasks.Select(st => st.TaskId).Distinct().ToList().Contains(st.Id), "SprintTask")).Select(t => new TaskResponse(t)).ToList();

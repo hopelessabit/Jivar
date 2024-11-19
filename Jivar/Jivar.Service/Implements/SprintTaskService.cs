@@ -36,7 +36,7 @@ namespace Jivar.Service.Implements
 
         public async Task<bool> deleteSprintTaskV2(int? id)
         {
-            var resultSprintTask = _sprintTaskRepository.Get(sp => sp.SprintId == id);
+            var resultSprintTask = _sprintTaskRepository.Get(sp => sp.TaskId == id);
             if (resultSprintTask != null)
             {
                 resultSprintTask.Status = SprintTaskEnum.INACTIVE.ToString();
