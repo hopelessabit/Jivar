@@ -30,7 +30,7 @@ namespace Jivar.API.Controllers
         public async Task<IActionResult> CreateAccount()
         {
             // Simulate user creation logic here
-            var verificationToken = Guid.NewGuid().ToString(); // Generate a token
+            var verificationToken = UserUtil.GenerateRandomSixDigitNumber();
             var verificationLink = $"{Request.Scheme}://{Request.Host}/api/account/verify?token={verificationToken}"; ;
 
             // Send verification email
@@ -79,8 +79,8 @@ namespace Jivar.API.Controllers
         [ProducesErrorResponseType(typeof(ProblemDetails))]
         public async Task<ActionResult> CreateNewAccount([FromForm] CreateNewAccountRequest AccountRequest)
         {
-            var verificationToken = Guid.NewGuid().ToString(); // Generate a token
-            var verificationLink = AccountRequest + verificationToken;
+            var verificationToken = UserUtil.GenerateRandomSixDigitNumber().ToString();
+            var verificationLink = AccountRequest.FeUrl + verificationToken;
 
             var roleName = UserUtil.GetRoleName(HttpContext);
             var isEmailExist = await _accountSerivce.IsEmailExist(AccountRequest.Email);
@@ -105,7 +105,7 @@ namespace Jivar.API.Controllers
             };
 
             // Send verification email
-            await _emailService.SendVerificationEmailAsync("micalminh1@gmail.com", verificationLink);
+            await _emailService.SendVerificationEmailAsync("micalminh1@gmail.com", verificationToken);
 
             var check = await _accountSerivce.AddAccount(account);
 
@@ -140,7 +140,7 @@ namespace Jivar.API.Controllers
         }
 
         [HttpPut(APIEndPointConstant.Account.UpdateInfo)]
-        public async Task<ActionResult> SeftUpdateAccount([FromForm] UpdateAccountRequest request)
+        public async Task<ActionResult> SeftUpdateAccount([FromBody] UpdateAccountRequest request)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace Jivar.API.Controllers
         }
 
         [HttpPut(APIEndPointConstant.Account.UpdateInfo + "/{id}")]
-        public async Task<ActionResult> SeftUpdateAccount(int id,[FromForm] UpdateAccountRequest request)
+        public async Task<ActionResult> SeftUpdateAccount(int id,[FromBody] UpdateAccountRequest request)
         {
             try
             {

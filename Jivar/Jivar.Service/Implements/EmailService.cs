@@ -26,7 +26,7 @@ namespace Jivar.Service.Implements
                 {
                     From = new MailAddress(smtpSettings.UserName, "Jivar"),
                     Subject = "Verify Your Account",
-                    Body = $"<p>Click the link below to verify your account:</p>\r\n<a href=\"{verificationLink}\">Verify Account</a>\r\n",
+                    Body = $"Your code: {verificationLink}",
                     IsBodyHtml = true
                 };
 

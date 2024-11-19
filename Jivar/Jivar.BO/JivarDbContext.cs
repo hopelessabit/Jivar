@@ -343,8 +343,8 @@ public partial class JivarDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__sprint_ta__sprin__59063A47");
 
-            entity.HasOne(d => d.Task).WithMany(p => p.SprintTasks)
-                .HasForeignKey(d => d.TaskId)
+            entity.HasOne(d => d.Task).WithOne(p => p.SprintTask)
+                .HasForeignKey<SprintTask>(d => d.TaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__sprint_ta__task___59FA5E80");
 

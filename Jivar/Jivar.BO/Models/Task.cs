@@ -28,7 +28,7 @@ public partial class Task
 
     public virtual ICollection<GroupTask> GroupTasks { get; set; } = new List<GroupTask>();
 
-    public virtual ICollection<SprintTask> SprintTasks { get; set; } = new List<SprintTask>();
+    public virtual SprintTask? SprintTask { get; set; } = null;
 
     public virtual ICollection<TaskDocument> TaskDocuments { get; set; } = new List<TaskDocument>();
 }

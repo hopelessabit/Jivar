@@ -24,7 +24,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Payloads\Backlog\Response\" />
-	  <Folder Include="Payloads\Comment\Response\" />
 	  <Folder Include="Payloads\ProjectPrints\Response\" />
 	  <Folder Include="Payloads\SprintTask\" />
 	</ItemGroup>

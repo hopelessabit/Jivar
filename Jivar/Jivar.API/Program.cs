@@ -26,7 +26,7 @@ internal class Program
         {
             options.AddPolicy("AllowSpecificOrigin", policy =>
             {
-                policy.WithOrigins("*")
+                policy.AllowAnyOrigin()
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
@@ -124,6 +124,7 @@ internal class Program
         builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
         builder.Services.AddScoped<IProjectRoleRepository, ProjectRoleRepository>();
         builder.Services.AddScoped<IProjectSprintRepository, ProjectSprintRepository>();
+        builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
         //Add services
         builder.Services.AddScoped<IAuthService, AuthService>();

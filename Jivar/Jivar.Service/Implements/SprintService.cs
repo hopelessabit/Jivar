@@ -68,7 +68,7 @@ namespace Jivar.Service.Implements
                 List<SprintTask> sprintTasks = (await _sprintTaskRepository.GetAllAsync(st => sprints.Select(s => s.Id).ToList().Contains(st.SprintId))).ToList();
                 if (!sprintTasks.Any())
                     return sprints;
-                List<TaskResponse> taskResponses = (await _taskRepository.GetAllAsync(st => sprintTasks.Select(st => st.TaskId).Distinct().ToList().Contains(st.Id))).Select(t => new TaskResponse(t)).ToList();
+                List<TaskResponse> taskResponses = (await _taskRepository.GetAllAsync(st => sprintTasks.Select(st => st.TaskId).Distinct().ToList().Contains(st.Id), "SprintTask")).Select(t => new TaskResponse(t)).ToList();
 
                 foreach (var item in sprints)
                 {

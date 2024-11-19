@@ -9,6 +9,11 @@ namespace Jivar.Service.Util
 {
     public class UserUtil
     {
+        public static int GenerateRandomSixDigitNumber()
+        {
+            Random random = new Random();
+            return random.Next(100000, 1000000); // Generates a number between 100000 and 999999
+        }
 
         public static int GetAccountId(HttpContext httpContext)
         {

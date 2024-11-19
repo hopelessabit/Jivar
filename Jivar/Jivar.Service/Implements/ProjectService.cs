@@ -27,18 +27,21 @@ namespace Jivar.Service.Implements
         private readonly IAccountService _accountSerivce;
         private readonly IProjectSprintService _projectSprintService;
         private readonly ISprintService _sprintService;
+        private readonly IProjectRoleService _projectRoleService;
 
         public ProjectService(IProjectRepository projectRepository,
             IProjectRoleService roleService,
             IAccountService accountService,
             IProjectSprintService projectSprintService,
-            ISprintService sprintService)
+            ISprintService sprintService,
+            IProjectRoleService projectRole)
         {
             _projectRepository = projectRepository;
             _roleService = roleService; 
             _accountSerivce = accountService;
             _projectSprintService = projectSprintService;
             _sprintService = sprintService;
+            _projectRoleService = projectRole;
         }
 
         // Get a project by ID
@@ -55,12 +58,11 @@ namespace Jivar.Service.Implements
             Project project = await GetProjectById(id);
             Account createBy = await _accountSerivce.GetAccountById(project.CreateBy);
             ProjectResponse result = new ProjectResponse(project, createBy);
-            List<int> accountIds = new List<int>();
-            accountIds.Add(createBy.Id);
+            List<int> accountIds = (await _projectRoleService.GetRolesByProjectId(id)).Select(pr => pr.AccountId).ToList();
+            List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(accountIds)).Select(a => new AccountInfoResponse(a)).ToList();
 
             if (includeRole != null && includeRole.Value)
             {
-                List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(accountIds)).Select(a => new AccountInfoResponse(a)).ToList();
                 List<ProjectRole> roles = await _roleService.GetRolesByProjectId(result.Id);
                 accountInfos.AddRange((await _accountSerivce.GetAccountsByIds(roles.Select(r => r.AccountId).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList());
                 List<ProjectRoleResponse> roleResponses = new List<ProjectRoleResponse>();
@@ -136,15 +138,6 @@ namespace Jivar.Service.Implements
                 pageNumber: pagingParams.PageNumber,
                 pageSize: pagingParams.PageSize
             );
-            
-            if (!projects.Any())
-                return new PagedResult<ProjectResponse>
-                {
-                    TotalRecords = 0,
-                    PageNumber = pagingParams.PageNumber,
-                    PageSize = pagingParams.PageSize,
-                    Data = null
-                };
 
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
@@ -375,7 +368,7 @@ namespace Jivar.Service.Implements
 
             ProjectRole role = await _roleService.GetRoleByProjectIdAndAccountId(projectId, accountId);
 
-            if (role.Role != ProjectRoleType.Owner && role.Role != ProjectRoleType.Manager)
+            if (role == null || (role.Role != ProjectRoleType.Owner && role.Role != ProjectRoleType.Manager))
                 throw new UnauthorizedAccessException("Only users with Owner or Manager roles can update the project.");
 
             var existingProject = await _projectRepository.GetAsync(p => p.Id == projectId);

@@ -2,8 +2,11 @@
 using Jivar.BO.Models;
 using Jivar.Service.Enums;
 using Jivar.Service.Interfaces;
+using Jivar.Service.Payloads.Account.Response;
 using Jivar.Service.Payloads.Comment.Request;
+using Jivar.Service.Payloads.Comment.Response;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Jivar.Service.Implements
 {
@@ -64,9 +67,35 @@ namespace Jivar.Service.Implements
             return _dbContext.Comments
                       .Where(c => c.TaskId == taskId && c.ParentId == null && c.Status == "ACTIVE")
                       .Include(c => c.Replies.Where(r => r.Status == "ACTIVE"))
+                      .ThenInclude(c => c.Replies.Where(r => r.Status == "ACTIVE"))
                       .ToList();
         }
 
+        public List<CommentResponse> GetCommentByTaskId(int taskId, List<AccountInfoResponse> account)
+        {
+            IEnumerable<Comment> allComments = _dbContext.Comments
+                      .Where(c => c.TaskId == taskId && c.Status == "ACTIVE")
+                      .ToList();
+            IEnumerable<Comment> rootComments = allComments.Where(c => c.ParentId == null);
+            return rootComments.Select(c => MapToCommentResponse(c, account, allComments)).ToList();
+        }
+        private CommentResponse MapToCommentResponse(Comment comment, List<AccountInfoResponse> account, IEnumerable<Comment> allComments)
+        {
+            return new CommentResponse()
+            {
+                Id = comment.Id,
+                Content = comment.Content,
+                TaskId = comment.TaskId,
+                CreateBy = comment.CreateBy,
+                CreateByName = account.Find(a => a.Id == comment.CreateBy).Name,
+                CreateTime = comment.CreateTime,
+                ParentId = comment.ParentId,
+                Replies = allComments
+                    .Where(c => c.ParentId == comment.Id) // Find replies for this comment
+                    .Select(c => MapToCommentResponse(c, account, allComments)) // Recursively map each reply
+                    .ToList()
+            };
+        }
         public bool updateCommentById(int id)
         {
             Comment comment = _dbContext.Comments.FirstOrDefault(t => t.Id == id);
