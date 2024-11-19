@@ -46,6 +46,8 @@ public partial class JivarDbContext : DbContext
 
     public virtual DbSet<TaskDocument> TaskDocuments { get; set; }
 
+    public DbSet<Notification> Notifications { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(GetConnectionString());
 
@@ -408,6 +410,15 @@ public partial class JivarDbContext : DbContext
                 .HasForeignKey(d => d.TaskId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__task_docu__task___571DF1D5");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.ToTable("notification");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.AccountId).HasColumnName("account_id");
+            entity.Property(e => e.CreateTime).HasColumnName("create_time");
         });
 
         OnModelCreatingPartial(modelBuilder);
