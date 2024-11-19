@@ -98,7 +98,8 @@ namespace Jivar.Service.Implements
             string? searchTerm = null,
             bool? includeSprint = false,
             bool? includeRole = false,
-            bool? includeTask = false)
+            bool? includeTask = false,
+            bool? includeDocument = false)
         {
             pagingParams.IncludeProperties = "ProjectRoles";
 
@@ -165,7 +166,7 @@ namespace Jivar.Service.Implements
                 List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
                 if (projectSprints.Any())
                 {
-                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeSprint);
+                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeSprint, includeDocument);
 
                     foreach (ProjectResponse item in result)
                     {
