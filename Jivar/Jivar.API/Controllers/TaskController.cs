@@ -115,15 +115,15 @@ namespace Jivar.API.Controllers
         }
 
         [HttpGet(APIEndPointConstant.TaskE.GetTaskById)]
-        [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> getTasksById(int id)
         {
-            BO.Models.Task taskResponse = _taskService.getTasksById(id);
+            TaskResponse taskResponse = _taskService.getTasksById(id);
             if (taskResponse == null)
             {
                 return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
             }
-            return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Lấy task thành công", taskResponse));
+            return StatusCode(StatusCodes.Status200OK, new ApiResponse<TaskResponse>(StatusCodes.Status200OK, "Lấy task thành công", taskResponse));
         }
 
         [HttpPut(APIEndPointConstant.TaskE.UpdateStatusTask)]

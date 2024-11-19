@@ -4,6 +4,7 @@ using Jivar.Service.Enums;
 using Jivar.Service.Exceptions;
 using Jivar.Service.Interfaces;
 using Jivar.Service.Payloads.Tasks.Request;
+using Jivar.Service.Payloads.Tasks.Response;
 
 namespace Jivar.Service.Implements
 {
@@ -29,9 +30,19 @@ namespace Jivar.Service.Implements
             return _dbContext.Tasks.ToList();
         }
 
-        public BO.Models.Task getTasksById(int taskId)
+        public TaskResponse getTasksById(int taskId)
         {
-            return _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(taskId));
+            BO.Models.Task task = _dbContext.Tasks.FirstOrDefault(task => task.Id.Equals(taskId));
+            if (task.Assignee == null)
+            {
+                return new TaskResponse(task);
+            }
+            Account account = _dbContext.Accounts.FirstOrDefault(account => account.Id == (task.Assignee.Value));
+            if (account == null)
+            {
+                throw new Exception("Assignee account not found.");
+            }
+            return new TaskResponse(task, account);
         }
 
         public BO.Models.Task updateStatus(int id, string status)

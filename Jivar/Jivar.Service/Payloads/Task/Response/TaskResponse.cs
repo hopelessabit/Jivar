@@ -1,4 +1,5 @@
-﻿using TaskModel = Jivar.BO.Models.Task;
+﻿using AccountModel = Jivar.BO.Models.Account;
+using TaskModel = Jivar.BO.Models.Task;
 
 namespace Jivar.Service.Payloads.Tasks.Response
 {
@@ -18,6 +19,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
 
         public int? Assignee { get; set; }
 
+        public string? AssigneeName {  get; set; }
+
         public DateTime? CompleteTime { get; set; }
 
         public int? DocumentId { get; set; }
@@ -36,6 +39,20 @@ namespace Jivar.Service.Payloads.Tasks.Response
             CompleteTime = task.CompleteTime;
             DocumentId = task.DocumentId;
             Status = task.Status;
+        }
+        public TaskResponse(TaskModel task, AccountModel account)
+        {
+            Id = task.Id;
+            Title = task.Title;
+            Description = task.Description;
+            CreateBy = task.CreateBy;
+            CreateTime = task.CreateTime;
+            AssignBy = task.AssignBy;
+            Assignee = task.Assignee;
+            CompleteTime = task.CompleteTime;
+            DocumentId = task.DocumentId;
+            Status = task.Status;
+            AssigneeName = account.Name;
         }
     }
 }
