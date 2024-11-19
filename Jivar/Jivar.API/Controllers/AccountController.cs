@@ -105,7 +105,7 @@ namespace Jivar.API.Controllers
             };
 
             // Send verification email
-            await _emailService.SendVerificationEmailAsync("micalminh1@gmail.com", verificationToken);
+            await _emailService.SendVerificationEmailAsync(AccountRequest.Email, verificationToken);
 
             var check = await _accountSerivce.AddAccount(account);
 
