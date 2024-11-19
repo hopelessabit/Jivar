@@ -1,6 +1,6 @@
-﻿using Jivar.BO.Models;
-using Jivar.Service.Payloads.Account.Response;
+﻿using Jivar.Service.Payloads.Account.Response;
 using Jivar.Service.Payloads.Comment.Response;
+using Jivar.Service.Payloads.Project.Response;
 using AccountModel = Jivar.BO.Models.Account;
 using TaskModel = Jivar.BO.Models.Task;
 
@@ -22,7 +22,7 @@ namespace Jivar.Service.Payloads.Tasks.Response
 
         public int? Assignee { get; set; }
 
-        public string? AssigneeName {  get; set; }
+        public string? AssigneeName { get; set; }
 
         public DateTime? CompleteTime { get; set; }
         public DateTime? StartDateSprintTask { get; set; }
@@ -33,6 +33,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
         public string Status { get; set; }
 
         public List<CommentResponse> Comments { get; set; }
+
+        public List<DocumentResponse> Documents { get; set; }
 
         public TaskResponse(TaskModel task)
         {
