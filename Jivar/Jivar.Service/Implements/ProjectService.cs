@@ -37,7 +37,7 @@ namespace Jivar.Service.Implements
             IProjectRoleService projectRole)
         {
             _projectRepository = projectRepository;
-            _roleService = roleService; 
+            _roleService = roleService;
             _accountSerivce = accountService;
             _projectSprintService = projectSprintService;
             _sprintService = sprintService;
@@ -93,11 +93,11 @@ namespace Jivar.Service.Implements
             return (await _projectRepository.GetAllAsync()).ToList();
         }
 
-        public async Task<PagedResult<ProjectResponse>> GetProjectByUserId(int userId, 
-            PagingAndSortingParams pagingParams, 
-            string? searchTerm = null, 
-            bool? includeSprint = false, 
-            bool? includeRole = false, 
+        public async Task<PagedResult<ProjectResponse>> GetProjectByUserId(int userId,
+            PagingAndSortingParams pagingParams,
+            string? searchTerm = null,
+            bool? includeSprint = false,
+            bool? includeRole = false,
             bool? includeTask = false)
         {
             pagingParams.IncludeProperties = "ProjectRoles";
@@ -165,7 +165,7 @@ namespace Jivar.Service.Implements
                 List<ProjectSprint> projectSprints = await _projectSprintService.GetAllProjectSprintsByProjectIds(projectIds);
                 if (projectSprints.Any())
                 {
-                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeTask);
+                    List<SprintResponse> sprints = await _sprintService.GetAllSprintsByProjectIds(projectIds, includeSprint);
 
                     foreach (ProjectResponse item in result)
                     {
@@ -230,7 +230,7 @@ namespace Jivar.Service.Implements
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
             List<ProjectResponse> result = projects.Select(p => new ProjectResponse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
-            
+
             if (includeRole != null && includeRole.Value)
             {
                 List<ProjectRole> roles = await _roleService.GetProjectRolesByIds(projects.Select(p => p.Id).ToList());

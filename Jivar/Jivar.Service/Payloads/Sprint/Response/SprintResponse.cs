@@ -1,5 +1,5 @@
-﻿using SprintModel = Jivar.BO.Models.Sprint;
-using Jivar.Service.Payloads.Tasks.Response;
+﻿using Jivar.Service.Payloads.Tasks.Response;
+using SprintModel = Jivar.BO.Models.Sprint;
 
 namespace Jivar.Service.Payloads.Sprint.Response
 {

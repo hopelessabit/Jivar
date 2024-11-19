@@ -17,5 +17,10 @@ namespace Jivar.Service.Implements
             _dbContext.TaskDocuments.Add(documentTask);
             _dbContext.SaveChanges();
         }
+
+        public List<TaskDocument> listTaskDocument(int taskId)
+        {
+            return _dbContext.TaskDocuments.Where(d => d.TaskId == taskId).ToList();
+        }
     }
 }
