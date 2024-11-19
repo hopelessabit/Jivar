@@ -141,6 +141,7 @@ internal class Program
         builder.Services.AddScoped<IProjectSprintService, ProjectSprintService>();
         builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<INotificationService, NotificationService>();
+        builder.Services.AddScoped<IExcelExportSerivce, ExcelExportSerivce>();
 
 
         // Add services to the container.
