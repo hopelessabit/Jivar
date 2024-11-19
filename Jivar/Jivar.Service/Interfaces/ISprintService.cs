@@ -12,6 +12,6 @@ namespace Jivar.Service.Interfaces
         Task<bool> deleteSprint(Sprint result);
         Task<Sprint?> GetLatestSprint(int projectId, bool? throwExceptionIfNull = false);
         Task<List<Sprint>> GetAllSprintsByProjectIds(List<int> projectIds);
-        Task<List<SprintResponse>> GetAllSprintsByProjectIds(List<int> projectIds, bool? includeTask = false);
+        Task<List<SprintResponse>> GetAllSprintsByProjectIds(List<int> projectIds, bool? includeTask = false, bool? includeDocument = false);
     }
 }

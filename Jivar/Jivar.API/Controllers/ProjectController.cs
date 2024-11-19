@@ -3,8 +3,6 @@ using Jivar.Service.Interfaces;
 using Jivar.Service.Paging;
 using Jivar.Service.Payloads.Project.Request;
 using Jivar.Service.Payloads.Project.Response;
-using Jivar.Service.Payloads.Sprint.Response;
-using Jivar.Service.PayLoads;
 using Jivar.Service.Util;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,12 +66,13 @@ namespace Jivar.API.Controllers
             [FromQuery] string? searchTerm = null,
             [FromQuery] bool? includeRole = null,
             [FromQuery] bool? includeSprint = null,
-            [FromQuery] bool? includeTask = null)
+            [FromQuery] bool? includeTask = null,
+            [FromQuery] bool? includeDocument = null)
         {
             try
             {
                 // Call the service to get paginated, sorted, and optionally filtered projects
-                var result = await _projectService.GetProjectByUserId(UserUtil.GetAccountId(HttpContext), pagingParams, searchTerm, includeSprint, includeRole, includeTask);
+                var result = await _projectService.GetProjectByUserId(UserUtil.GetAccountId(HttpContext), pagingParams, searchTerm, includeSprint, includeRole, includeTask, includeDocument);
 
                 // Return the result with an OK status
                 return Ok(result);

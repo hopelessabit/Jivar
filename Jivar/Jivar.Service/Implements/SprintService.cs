@@ -66,7 +66,7 @@ namespace Jivar.Service.Implements
             return (await _sprintRepository.GetAllAsync(s => projectIds.Contains(s.ProjectId))).ToList();
         }
 
-        public async Task<List<SprintResponse>> GetAllSprintsByProjectIds(List<int> projectIds, bool? includeTask)
+        public async Task<List<SprintResponse>> GetAllSprintsByProjectIds(List<int> projectIds, bool? includeTask, bool? includeDocument)
         {
             List<SprintResponse> sprints = (await _sprintRepository.GetAllAsync(s => projectIds.Contains(s.ProjectId))).Select(s => new SprintResponse(s)).ToList();
             if (includeTask.Value)
@@ -83,30 +83,38 @@ namespace Jivar.Service.Implements
                         continue;
                     List<TaskResponse> taskResponsesForSprint = taskResponses.FindAll(t => sprintTasksForSprint.Select(s => s.TaskId).ToList().Contains(t.Id)).ToList();
                     item.Tasks = taskResponsesForSprint;
-                    foreach (var t in taskResponsesForSprint)
+                    if (includeDocument.HasValue && includeDocument.Value)
                     {
-                        List<TaskDocument> taskDocuments = _taskDocumentService.listTaskDocument(t.Id);
-
-                        List<DocumentResponse> documentResponses = new List<DocumentResponse>();
-
-                        foreach (var d in taskDocuments)
+                        foreach (var t in taskResponsesForSprint)
                         {
-                            Document document = _documentService.getDocumentsById(d.DocumentId);
+                            List<TaskDocument> taskDocuments = _taskDocumentService.listTaskDocument(t.Id);
+                            List<DocumentResponse> documentResponses = new List<DocumentResponse>();
 
-                            if (document != null)
+                            foreach (var d in taskDocuments)
                             {
-                                documentResponses.Add(new DocumentResponse(d)
-                                {
-                                    Id = document.Id,
-                                    Name = document.Name,
-                                    FilePath = document.FilePath,
-                                    UploadDate = document.UploadDate,
-                                    UploadBy = document.UploadBy
-                                });
-                            }
-                        }
+                                Document document = _documentService.getDocumentsById(d.DocumentId);
 
-                        t.Documents = documentResponses;
+                                if (document != null)
+                                {
+                                    documentResponses.Add(new DocumentResponse(d)
+                                    {
+                                        Id = document.Id,
+                                        Name = document.Name,
+                                        FilePath = document.FilePath,
+                                        UploadDate = document.UploadDate,
+                                        UploadBy = document.UploadBy
+                                    });
+                                }
+                            }
+                            t.Documents = documentResponses.Any() ? documentResponses : null;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var t in taskResponsesForSprint)
+                        {
+                            t.Documents = null;
+                        }
                     }
                 }
             }
