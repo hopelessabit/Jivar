@@ -16,9 +16,13 @@ namespace Jivar.Service.Payloads.Tasks.Response
 
         public int? CreateBy { get; set; }
 
+        public string? CreateByName { get; set; }
+
         public DateTime? CreateTime { get; set; }
 
         public int? AssignBy { get; set; }
+
+        public string? AssignByName { get; set; }
 
         public int? Assignee { get; set; }
 
@@ -67,12 +71,17 @@ namespace Jivar.Service.Payloads.Tasks.Response
             Status = task.Status;
             AssigneeName = account.Name;
         }
-        public TaskResponse(TaskModel task, AccountInfoResponse account, List<CommentResponse> comments)
+        public TaskResponse(TaskModel task,
+            AccountInfoResponse createBy,
+            List<CommentResponse> comments,
+            AccountInfoResponse? assignee = null,
+            AccountInfoResponse? assignBy = null)
         {
             Id = task.Id;
             Title = task.Title;
             Description = task.Description;
             CreateBy = task.CreateBy;
+            CreateByName = createBy == null ? null : createBy.Name;
             CreateTime = task.CreateTime;
             AssignBy = task.AssignBy;
             Assignee = task.Assignee;
@@ -82,7 +91,8 @@ namespace Jivar.Service.Payloads.Tasks.Response
             CompleteTime = task.CompleteTime;
             DocumentId = task.DocumentId;
             Status = task.Status;
-            AssigneeName = account.Name;
+            AssigneeName = assignee == null ? null : assignee.Name ;
+            AssignByName = assignBy == null ? null : assignBy.Name ;
             Comments = comments;
         }
     }

@@ -14,15 +14,18 @@ namespace Jivar.Service.Implements
         private readonly ITaskRepository _taskRepository;
         private readonly ITaskDocumentService _taskDocumentService;
         private readonly IDocumentService _documentService;
+        private readonly ITaskService _taskService;
         public SprintService(ISprintRepository sprintRepository,
             ISprintTaskRepository sprintTaskRepository,
             ITaskRepository taskRepository,
             ITaskDocumentService taskDocumentService,
-            IDocumentService documentService)
+            IDocumentService documentService,
+            ITaskService taskService)
         {
             _sprintRepository = sprintRepository;
             _sprintTaskRepository = sprintTaskRepository;
             _taskRepository = taskRepository;
+            _taskService = taskService;
             _taskDocumentService = taskDocumentService;
             _documentService = documentService;
         }
@@ -81,7 +84,7 @@ namespace Jivar.Service.Implements
                     List<SprintTask> sprintTasksForSprint = sprintTasks.FindAll(st => st.SprintId == item.Id).ToList();
                     if (!sprintTasksForSprint.Any())
                         continue;
-                    List<TaskResponse> taskResponsesForSprint = taskResponses.FindAll(t => sprintTasksForSprint.Select(s => s.TaskId).ToList().Contains(t.Id)).ToList();
+                    List<TaskResponse> taskResponsesForSprint = await _taskService.GetTasksByIds(sprintTasksForSprint.Select(s => s.TaskId).ToList(), item.ProjectId);
                     item.Tasks = taskResponsesForSprint;
                     if (includeDocument.HasValue && includeDocument.Value)
                     {

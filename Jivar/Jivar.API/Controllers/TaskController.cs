@@ -126,7 +126,7 @@ namespace Jivar.API.Controllers
             return StatusCode(StatusCodes.Status200OK, new ApiResponse<TaskResponse>(StatusCodes.Status200OK, "Lấy task thành công", taskResponse));
         }
 
-        [HttpGet("/task/{taskId}/project/{projectId}")]
+        [HttpGet("/api/v1/task/{taskId}/project/{projectId}")]
         [ProducesResponseType(typeof(TaskResponse), StatusCodes.Status200OK)]
         public async Task<ActionResult> getTasksById(int taskId, int projectId)
         {
@@ -142,7 +142,7 @@ namespace Jivar.API.Controllers
         [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
         public async Task<ActionResult> getTasksById(int id, [Required] TaskEnum status)
         {
-            BO.Models.Task taskResponse = _taskService.updateStatus(id, status.ToString());
+            BO.Models.Task taskResponse = await _taskService.updateStatusV2(id, status.ToString());
             if (taskResponse == null)
             {
                 return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
@@ -154,7 +154,7 @@ namespace Jivar.API.Controllers
         [ProducesResponseType(typeof(BO.Models.Task), StatusCodes.Status200OK)]
         public async Task<ActionResult> updateTask([Required] int id, [FromBody] UpdateTaskRequest request)
         {
-            BO.Models.Task task = await _taskService.updateTask(id, request);
+            BO.Models.Task task = await _taskService.updateTaskV2(id, request);
             if (task == null)
             {
                 return StatusCode(StatusCodes.Status200OK, new ApiResponse<BO.Models.Task>(StatusCodes.Status200OK, "Task không tồn tại", null));
