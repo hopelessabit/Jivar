@@ -140,6 +140,15 @@ namespace Jivar.Service.Implements
                 pageSize: pagingParams.PageSize
             );
 
+            if (projects == null || !projects.Any())
+                return new PagedResult<ProjectResponse>
+                {
+                    TotalRecords = 0,
+                    PageNumber = pagingParams.PageNumber,
+                    PageSize = pagingParams.PageSize,
+                    Data = null
+                };
+
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
             List<ProjectResponse> result = projects.Select(p => new ProjectResponse(p, accountInfos.Find(a => a.Id == p.CreateBy).ThrowIfNull($"Account with Id: {p.CreateBy} not found"))).ToList();
@@ -227,6 +236,15 @@ namespace Jivar.Service.Implements
                 pageNumber: pagingParams.PageNumber,
                 pageSize: pagingParams.PageSize
             );
+
+            if (projects == null)
+                return new PagedResult<ProjectResponse>
+                {
+                    TotalRecords = 0,
+                    PageNumber = pagingParams.PageNumber,
+                    PageSize = pagingParams.PageSize,
+                    Data = null
+                };
 
             List<AccountInfoResponse> accountInfos = (await _accountSerivce.GetAccountsByIds(projects.Select(p => p.CreateBy).Distinct().ToList())).Select(a => new AccountInfoResponse(a)).ToList();
 
